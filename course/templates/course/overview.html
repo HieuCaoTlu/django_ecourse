@@ -1,0 +1,351 @@
+{% extends 'course/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+<link rel="stylesheet" href="{% static 'css/overview.css' %}">
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="mt-4">
+                <h5 class="card-title fs-1 mb-2" style="font-weight: 700;color: #5E5DF0">{{ course.title }}</h5>
+                <div class="row fs-6 ms-1 mb-3" style="font-weight: 600;">
+                    {% if course.teacher.level == 0 %}
+                    Giảng viên:
+                    {% elif course.teacher.level == 1 %}
+                    Thạc sĩ:
+                    {% else %}
+                    Tiến sĩ:
+                    {% endif %}
+                    {{ course.teacher }}
+                </div>
+                {% if message and message == 'FOUND' %}
+                {% if enrollment.completed %}
+                <button class="small-button btn-lg rounded-pill me-3" style="background-color: rgb(189, 255, 224);"
+                    disabled>Đã hoàn thành
+                    <i class="ms-1 fas fa-circle-check"></i>
+                </button>
+                {% else %}
+                <button class="small-button btn-lg rounded-pill me-3" disabled>Đã đăng kí
+                    <i class="ms-1 fas fa-circle-check"></i>
+                </button>
+                {% endif %}
+                {% else %}
+                <form action="{% url 'course:detail_course' course.id %}" method="post" style="display: inline-block;">
+                    {% csrf_token %}
+                    <button class="blue-button btn-lg rounded-pill me-3" type="submit">Đăng kí khóa học</button>
+                </form>
+                {% endif %}
+                <button disabled class="small-button me-2">
+                    <span class="fs-6">
+                        {{ course.sect }}
+                        <span class="fs-6"></span>
+                        <i class="ms-1 fas fa-book"></i>
+                    </span>
+                </button>
+                <button disabled class="small-button me-2">
+                    <span class="fs-6">
+                        {{ course.enroll }}
+                        <span class="fs-6"></span>
+                        <i class="ms-1 fas fa-user"></i>
+                    </span>
+                </button>
+                <button disabled class="small-button me-2">
+                    <span class="fs-6">
+                        {% if not course.vote %}
+                        Chưa có
+                        {% else %}
+                        {{ course.vote }}/5.0
+                        {% endif %}
+                        <span class="fs-6"><i class="fas fa-star"></i>
+                        </span>
+                </button>
+            </div>
+        </div>
+        <div class="col d-flex align-items-center justify-content-center">
+        </div>
+    </div>
+    <ul class="nav nav-tabs mt-5">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'course:detail_course' course.id  %}" style="color: black;">Mục lục</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#" style="font-weight: 600;color: #5E5DF0;">Giới
+                thiệu</a>
+        </li>
+        {% if enrollment %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'course:bookmark_course' course.id  %}" style="color: black;">Bookmark</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'course:certificate_course' course.id %}" style="color: black;">Chứng
+                chỉ</a>
+        </li>
+        {% endif %}
+    </ul>
+    <div class="container-fluid mt-4">
+        <p>{{overview.description}}</p>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="border p-3 rounded-5 h-100"">
+                    <h4 class=" mb-3 highlight-button">Phase 1</h4>
+                    <div class="align-items-center mb-2 ms-2">
+                        <i class="fas fa-check me-4"></i>
+                        {{overview.scope1}}
+                    </div>
+                    <div class="d-flex align-items-center mb-2 ms-2">
+                        <i class="fas fa-check me-4"></i>
+                        {{overview.scope2}}
+                    </div>
+                    <div class="d-flex align-items-center ms-2">
+                        <i class="fas fa-check me-4"></i>
+                        {{overview.scope3}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border p-3 rounded-5 h-100">
+                    <h4 class="mb-3 highlight-button">Phase 2</h4>
+                    <div class="d-flex align-items-center mb-2 ms-2">
+                        <i class="fas fa-check me-4"></i>
+                        {{overview.scope4}}
+                    </div>
+                    <div class="d-flex align-items-center mb-2 ms-2">
+                        <i class="fas fa-check me-4"></i>
+                        {{overview.scope5}}
+                    </div>
+                    <div class="d-flex align-items-center mb-2 ms-2">
+                        <i class="fas fa-check me-4"></i>
+                        {{overview.scope6}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mt-4 mb-3">
+        <h3 class="mb-3">Đánh giá</h3>
+        <div class="d-flex justify-content-between">
+            <div class="col-4 rounded-5 border p-3 d-flex">
+                {% if not course.vote %}
+                    <div class="w-100 h-100 d-flex justify-content-center align-items-center text-center">
+                        Chưa có đánh giá
+                    </div>
+                {% else %}
+                    <div class="ms-4 col-md-4 d-flex align-items-center justify-content-center"
+                        style="height: 100%;font-weight: 700;font-size: 3rem;">
+                        {{course.vote}}<i class="fas fa-star ms-3" style="color: rgb(255, 234, 72);"></i>
+                    </div>
+                {% endif %}
+                <div class="ms-5 col-auto align-items-center text-align-center justify-content-center">
+                    {% for each in course.vote_dct %}
+                    <div class="row" style="width: 20px;">
+                        <div class="d-flex align-items-center justify-content-center"
+                            style="width: 100%; height: 20px;margin-bottom: 5px;">{{ each }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="ms-2 col-md-5">
+                    {% for value in course.vote_dct.values %}
+                    <div class="progress ms-2 mt-1 mb-2" role="progressbar" aria-label="Basic example" aria-valuenow="0"
+                        aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar" value="{{value}}"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="ms-3 w-100 rounded-5 border p-3">
+                {% if enrollment.completed %}
+                {% if enrollment.review == '' %}
+                <div id="full-stars-example-two">
+                    <div class="row align-items-center mb-3">
+                        <div class="col-sm-5">
+                            <div class="fs-4 ms-3">Đánh giá của bạn</div>
+                        </div>
+                        <div class="col-sm-7 text-end d-flex">
+                            <div class="rating-group me-3 ms-5 d-inline-block">
+                                <input disabled checked class="rating__input rating__input--none" name="rating3"
+                                    id="rating3-none" value="0" type="radio">
+                                <label aria-label="1 star" class="rating__label" for="rating3-1"><i
+                                        class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                <input class="rating__input" name="rating3" id="rating3-1" value="1" type="radio">
+                                <label aria-label="2 stars" class="rating__label" for="rating3-2"><i
+                                        class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                <input class="rating__input" name="rating3" id="rating3-2" value="2" type="radio">
+                                <label aria-label="3 stars" class="rating__label" for="rating3-3"><i
+                                        class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                <input class="rating__input" name="rating3" id="rating3-3" value="3" type="radio">
+                                <label aria-label="4 stars" class="rating__label" for="rating3-4"><i
+                                        class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                <input class="rating__input" name="rating3" id="rating3-4" value="4" type="radio">
+                                <label aria-label="5 stars" class="rating__label" for="rating3-5"><i
+                                        class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                <input class="rating__input" name="rating3" id="rating3-5" value="5" type="radio">
+                            </div>
+                            <form id="rating-form" action="" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" id="vote" name="vote">
+                                <input type="hidden" id="comment" name="comment">
+                                <button class="highlight-button me-2">Gửi Đánh Giá</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row align-items-center m-3">
+                        <textarea class="form-control rounded-4" rows="3" placeholder="Viết tại đây"
+                            id="review-textarea" style="resize: none;" required></textarea>
+                    </div>
+                </div>
+                {% else %}
+                <div class="w-100 h-100 d-flex justify-content-center align-items-center text-center">
+                    <div class="row mt-2 d-flex" style="color:rgb(255, 234, 72);">
+                        {% if enrollment.vote == 1 %}
+                        <div class="col">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        {% elif enrollment.vote == 2 %}
+                        <div class="col">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        {% elif enrollment.vote == 3 %}
+                        <div class="col">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        {% elif enrollment.vote == 4 %}
+                        <div class="col">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        {% else %}
+                        <div class="col">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        {% endif %}
+                        <div class="fs-4 mb-2 mt-2" style="color: black;">{{enrollment.student.first_name}} {{enrollment.student.last_name}}</div>
+                        <p style="color: black;">{{enrollment.review}}</p>
+                    </div>    
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="w-100 h-100 d-flex justify-content-center align-items-center text-center">
+                    Bạn phải tham gia và hoàn thành khóa học để được đánh giá
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% if course.vote %}
+        <div class="mt-5 container-fluid rounded-5 border p-3">
+            <div id="carouselExample" class="carousel slide">
+                <div class="carousel-inner">
+                    <div class="carousel-item active" style="height: 120px;">
+                        <div class="row w-100 h-100 d-flex align-items-center justify-content-center text-center">
+                            {% for each in course.review.first %}
+                            <div class="col">
+                                <div class="row mt-2 mb-2 d-flex" style="color:rgb(255, 234, 72);">
+                                    {% if each.vote == 1 %}
+                                    <div class="col">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    {% elif each.vote == 2 %}
+                                    <div class="col">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    {% elif each.vote == 3 %}
+                                    <div class="col">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    {% elif each.vote == 4 %}
+                                    <div class="col">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    {% else %}
+                                    <div class="col">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="fs-4 mb-2">{{each.student.first_name}} {{each.student.last_name}}</div>
+                                <p>{{each.review}}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="carousel-item" style="height: 120px;">
+                        <div class="row w-100 h-100 d-flex align-items-center justify-content-center text-center">
+                            {% for each in course.review.second %}
+                            <div class="col">
+                                Meow
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="carousel-item" style="height: 120px;">
+                        <div class="row w-100 h-100 d-flex align-items-center justify-content-center text-center">
+                            {% for each in course.review.third %}
+                            <div class="col">
+                                Meow
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                    data-bs-slide="prev">
+                    <span aria-hidden="true"><i class="fas fa-caret-left"
+                            style="font-size: 40px;color: black;"></i></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                    data-bs-slide="next">
+                    <span aria-hidden="true"><i class="fas fa-caret-right"
+                            style="font-size: 40px;color: black;"></i></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        {% else %}
+
+        {% endif %}
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.progress-bar').each(function () {
+            var value = $(this).attr('value');
+            $(this).css('width', value + '%');
+        });
+    });
+    $(document).ready(function () {
+        $('.rating__input').on('click', function () {
+            var ratingValue = $(this).val();
+
+            $('#vote').val(ratingValue);
+
+            var hiddenRatingValue = $('#vote').val();
+            console.log("Giá trị của input ẩn: " + hiddenRatingValue);
+        });
+    });
+    $(document).ready(function () {
+        $('#review-textarea').on('input', function () {
+            var reviewValue = $(this).val();
+            $('#comment').val(reviewValue);
+        });
+    });
+</script>
+{% endblock %}

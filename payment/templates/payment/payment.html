@@ -1,0 +1,105 @@
+{% extends "payment/base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+<style>
+    .dot {
+        margin-left: 5px;
+    }
+
+    /* Căn giữa nút submit */
+    .center-btn {
+        text-align: center;
+    }
+</style>
+<div class="container mt-5" style="border: 1px solid #dfdfdf;border-radius: 25px;max-width: 70%;">
+    <h2 class="text-center mt-4" style="font-weight: 500">Thanh toán khóa học</h2>
+    <p class="text-center mt-1" style="font-size: 13px;">Vui lòng hoàn thành phiên thanh toán trong thời gian 1 tiếng</p>
+    <div class="row justify-content-center">
+        <div class="col-md-5 mt-4 text-align-start">
+            <img src="{{ course.cover }}" alt="Course Image" style="max-width: 100%;height: 12rem;border-radius: 25px;border: 1px solid #dfdfdf;">
+            <h4 class="mt-3">{{ course.title }}</h4>
+            <p>Giảng viên: {{ course.teacher }}</p>
+        </div>
+        <div class="col-md-5 mt-4">
+            <form action="{% url 'payment:payment' course.id %}" id="create_form" method="post">
+                <input type="text" name="order_type" value="billpayment" style="display: none;">
+                <input name="order_id" type="text" value="{% now "YmdHis" %}" style="display: none;"/>
+                <div class="form-group row mb-3">
+                    <label for="amount" class="col-sm-3 col-form-label">Số tiền</label>
+                    <div class="col-sm-9">
+                        <input readonly class="form-control" id="amount" name="amount" type="number"
+                            value="{{ course.price }}" style="display: none;">
+                        <span id="formattedPrice" class="form-control">{{ course.price | floatformat:0 }}</span>
+                    </div>
+                </div>
+                <div class="form-group row mb-3">
+                    <label for="order_desc" class="col-sm-3 col-form-label">Nội dung</label>
+                    <div class="col-sm-9">
+                        <textarea readonly class="form-control" id="order_desc" name="order_desc" style="resize: none;height: 6rem;">{{ student.first_name }} {{ student.last_name }} thanh toan {{ course.title }} luc: {% now "Y-m-d H:i:s" %}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row mb-3">
+                    <label for="bank_code" class="col-sm-3 col-form-label">Ngân hàng</label>
+                    <div class="col-sm-9">
+                        <select name="bank_code" id="bank_code" class="form-control">
+                            <option value="">Không chọn</option>
+                            <option value="NCB"> Ngan hang NCB</option>
+                            <option value="AGRIBANK"> Ngan hang Agribank</option>
+                            <option value="SCB"> Ngan hang SCB</option>
+                            <option value="SACOMBANK">Ngan hang SacomBank</option>
+                            <option value="EXIMBANK"> Ngan hang EximBank</option>
+                            <option value="MSBANK"> Ngan hang MSBANK</option>
+                            <option value="NAMABANK"> Ngan hang NamABank</option>
+                            <option value="VNMART"> Vi dien tu VnMart</option>
+                            <option value="VIETINBANK">Ngan hang Vietinbank</option>
+                            <option value="VIETCOMBANK"> Ngan hang VCB</option>
+                            <option value="HDBANK">Ngan hang HDBank</option>
+                            <option value="DONGABANK"> Ngan hang Dong A</option>
+                            <option value="TPBANK"> Ngân hàng TPBank</option>
+                            <option value="OJB"> Ngân hàng OceanBank</option>
+                            <option value="BIDV"> Ngân hàng BIDV</option>
+                            <option value="TECHCOMBANK"> Ngân hàng Techcombank</option>
+                            <option value="VPBANK"> Ngan hang VPBank</option>
+                            <option value="MBBANK"> Ngan hang MBBank</option>
+                            <option value="ACB"> Ngan hang ACB</option>
+                            <option value="OCB"> Ngan hang OCB</option>
+                            <option value="IVB"> Ngan hang IVB</option>
+                            <option value="VISA"> Thanh toan qua VISA/MASTER</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mb-3" style="display: none;">
+                    <label for="language" class="col-sm-3 col-form-label">Ngôn ngữ</label>
+                    <div class="col-sm-9">
+                        <select name="language" id="language" class="form-control">
+                            <option value="vn">Tiếng Việt</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Nút submit -->
+                <div class="form-group row mb-3 center-btn">
+                    <div class="col-sm-12">
+                        <button type="submit" class="blue-button mb-4 mt-3">Thanh toán bằng VNPay</button>
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    // Hàm định dạng số
+    function formatNumber(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Lấy giá trị số từ {{ course.price }}
+    var price = "{{ course.price }}";
+
+    // Định dạng số và gán vào phần tử
+    var formattedPrice = formatNumber(price);
+    document.getElementById('formattedPrice').textContent = formattedPrice + ' VND';
+</script>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'course/base.html' %}
+{% load static %}
+{% block content %}
+{% load widget_tweaks %}
+<style>
+    .datepicker table tr td,
+    .datepicker table tr th,
+    .datepicker-months table tr td,
+    .datepicker-months table tr th,
+    .datepicker-years table tr td,
+    .datepicker-years table tr th {
+        padding: 8px;
+        border-radius: 10px;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+<div class="container mt-5" style="border: 1px solid #dfdfdf;border-radius: 25px;max-width: 30%;">
+    <h2 class="text-center mt-4" style="font-weight: 500">Đăng ký</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-10 mt-4">
+            {% if message and message == 'FAIL' %}
+            <div class="alert alert-danger" role="alert">Đăng kí thất bại, vui lòng thử lại</div>
+            {% endif %}
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="row" style="margin: 12px 0px;">
+                    {% render_field form.first_name class="form-control col me-2" placeholder="Họ, tên đệm" type="text" %}
+                    {% render_field form.last_name class="form-control col ms-2" placeholder="Tên" type="text" %}
+                </div>
+                <select class="form-control mb-3" name="gender">
+                    <option value="">-- Chọn giới tính --</option>
+                    {% for gender_choice in form.gender.field.choices %}
+                    <option value="{{ gender_choice.0 }}">{{ gender_choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-control mb-3" name="major">
+                    <option value="">-- Chọn chuyên ngành --</option>
+                    {% for major_choice in form.major.field.choices %}
+                    <option value="{{ major_choice.0 }}">{{ major_choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                {% render_field form.birth_date id="datepicker" class="form-control mb-3" placeholder="Ngày sinh" %}
+                {% render_field form.email class="form-control mb-3" placeholder="Email" type="email" %}
+                {% render_field form.phone class="form-control mb-3" placeholder="Điện thoại" type="text" %}
+                {% render_field form.username class="form-control mb-3" placeholder="Tên đăng nhập" type="text" %}
+                {% render_field form.password1 class="form-control mb-3" placeholder="Mật khẩu" type="password" %}
+                <small class="form-text text-muted">
+                    <ul>
+                        <li>Mật khẩu phải chứa tối thiểu 8 kí tự</li>
+                        <li>Mật khẩu không được quá giống thông tin cá nhân</li>
+                        <li>Mật khẩu không được quá thông dụng</li>
+                        <li>Mật khẩu phải chứa cả kí tự và số</li>
+                    </ul>
+                </small>
+                {% render_field form.password2 class="form-control mb-3" placeholder="Xác nhận mật khẩu" type="password" %}
+
+                <div class="row align-items-center justify-content-center ms-3 me-3 mb-5">
+                    <button type="submit" class="blue-button">Đăng kí</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#datepicker').datepicker({
+            format: 'dd-mm-yyyy',
+            endDate: '0',
+            yearRange: 10
+        }).on('changeDate', function(e) {
+            var selectedDate = e.date;
+            var formattedDate = selectedDate.getDate() + '-' + (selectedDate.getMonth() + 1) + '-' + selectedDate.getFullYear();
+            $('input[name="birth_date"]').val(formattedDate);
+        });
+    });
+
+    $(document).ready(function () {
+        $('form').submit(function () {
+            var majorValue = $('select[name="major"]').val();
+            if (majorValue === '') {
+                alert('Vui lòng chọn một chuyên ngành.');
+                event.preventDefault();
+            }
+
+            var birthDate = $('input[name="birth_date"]').val();
+            var parts = birthDate.split('-');
+            var formattedBirthDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+            $('input[name="birth_date"]').val(formattedBirthDate);
+        });
+    });
+</script>
+
+
+
+{% endblock %}
+

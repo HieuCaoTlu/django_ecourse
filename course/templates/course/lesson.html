@@ -1,0 +1,104 @@
+{% extends 'course/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+
+<div class="container">
+    <div class="row">
+        <div class="col mt-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'course:detail_course' lesson.course_temp.id %}"
+                            style="text-decoration: none;color: black;">
+                            {{ lesson.course_temp.title }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ lesson.section_temp.title }}</li>
+                </ol>
+            </nav>
+            <div class="mt-4">
+                <h5 id="lesson-title" class="card-title fs-1 mb-3" style="font-weight: 700;">
+                    {{ lesson.title }}
+                </h5>
+                {% if lesson.completed %}
+                <button class="small-button btn-lg rounded-pill me-2" disabled>Đã hoàn thành
+                    <i class="ms-1 fas fa-circle-check"></i>
+                </button>
+                {% else %}
+                <form action="" method="post" style="display: inline-block;">
+                    {% csrf_token %}
+                    {% if message == 'LOGGED' %}
+                    <button class="highlight-button btn-lg rounded-pill me-2" type="submit" name="complete_lesson">Xác nhận hoàn thành</button>
+                    {% else %}
+                    <button class="highlight-button btn-lg rounded-pill me-2" disabled>Đang học thử</button>
+                    {% endif %}
+                </form>
+                {% endif %}
+                <span class="fs-6">
+                    {% if lesson.document_type == 'PDF' %}
+                    <button disabled class="highlight-button me-2">
+                        Tài liệu
+                        <i class="fas fa-file ms-1"></i>
+                    </button>
+                    {% elif lesson.document_type == 'VIDEO' %}
+                    <button disabled class="highlight-button me-2"">
+                        Video
+                        <i class=" fas fa-video ms-1"></i>
+                    </button>
+                    {% else %}
+                    <button disabled class="highlight-button me-2">
+                        Meeting
+                        <i class="fas fa-calendar ms-1"></i>
+                    </button>
+                    {% endif %}
+                </span>
+                {% if message == 'LOGGED' %}
+                {% if lesson.bookmark %}
+                <form action="" method="post" style="display: inline-block;">
+                    {% csrf_token %}
+                    <button class="small-button me-2" type="submit" name="remove_bookmark"
+                        style="background-color: #ffc862;">
+                        <span class="fs-6">
+                            Đã đánh dấu
+                            <i class="ms-1 fas fa-bookmark"></i>
+                        </span>
+                    </button>
+                </form>
+                {% else %}
+                <form action="" method="post" style="display: inline-block;">
+                    {% csrf_token %}
+                    <button class="small-button me-2" type="submit" name="add_bookmark">
+                        <span class="fs-6">
+                            Đánh dấu
+                            <i class="ms-1 fas fa-bookmark"></i>
+                        </span>
+                    </button>
+                </form>
+                {% endif %}
+                {% endif %}
+
+                <button disabled class="small-button me-2">
+                    <span class="fs-6">
+                        {{ lesson.score }}
+                        <i class="ms-1 fas fa-square-check"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div class="col d-flex align-items-center justify-content-center">
+        </div>
+    </div>
+    <div class="mt-5" style="color:#3a3a3a">
+        {% if lesson.document_type == 'PDF' %}
+        <iframe src="{{lesson.document}}" width="100%" height="600px" style="border-radius: 25px;">
+        </iframe>
+        {% elif lesson.document_type == 'VIDEO' %}
+        <iframe width="1000px" height="600px" src="{{lesson.document}}" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 25px;">
+        </iframe>
+        {% endif %}
+        </div">
+    </div>
+    {% endblock %}

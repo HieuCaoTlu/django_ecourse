@@ -1,0 +1,130 @@
+.section-card {
+  border: 1px solid #dfdfdf;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.lesson-card {
+  border: 1px solid #dfdfdf;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.toggle-button {
+  cursor: pointer;
+  border: none;
+  padding: 5px 10px;
+}
+
+.lessons-list {
+  list-style-type: decimal;
+  display: none;
+}
+
+.section-card.expanded .lessons-list {
+  display: block;
+}
+
+
+.lesson-title:hover {
+  color: #5E5DF0;
+}
+
+.lesson-title {
+  color: black;
+}
+
+.small-button:hover {
+  background-color: #c7d2ff;
+}
+
+.small-button:disabled:hover {
+  background: #ebebeb;
+}
+
+.rating-group {
+  display: inline-flex;
+}
+
+.rating__icon {
+  pointer-events: none;
+}
+
+.rating__input {
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+.rating__label {
+  cursor: pointer;
+  padding: 0 0.1em;
+  font-size: 2rem;
+}
+
+.rating__icon--star {
+  color: rgb(255, 234, 72);
+}
+
+.rating__icon--none {
+  color: #eee;
+}
+
+.rating__input:checked~.rating__label .rating__icon--star {
+  color: #ddd;
+}
+
+.rating-group:hover .rating__label .rating__icon--star {
+  color: rgb(255, 234, 72);
+}
+
+.rating__input:hover~.rating__label .rating__icon--star {
+  color: #ddd;
+}
+
+.rating-group:hover .rating__input--none:not(:hover)+.rating__label .rating__icon--none {
+  color: #eee;
+}
+
+#full-stars-example-two {
+
+  .rating-group {
+      display: inline-flex;
+  }
+
+  .rating__icon {
+      pointer-events: none;
+  }
+
+  .rating__input {
+      position: absolute !important;
+      left: -9999px !important;
+  }
+
+  .rating__input--none {
+      display: none
+  }
+
+  .rating__label {
+      cursor: pointer;
+      padding: 0 0.1em;
+      font-size: 2rem;
+  }
+
+  .rating__icon--star {
+      color: rgb(255, 234, 72);
+  }
+
+  .rating__input:checked~.rating__label .rating__icon--star {
+      color: #ddd;
+  }
+
+  .rating-group:hover .rating__label .rating__icon--star {
+      color: rgb(255, 234, 72);
+  }
+
+  .rating__input:hover~.rating__label .rating__icon--star {
+      color: #ddd;
+  }
+}

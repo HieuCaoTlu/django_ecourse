@@ -1,0 +1,92 @@
+{% extends "payment/base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+<div class="container mt-5" style="border: 1px solid #dfdfdf; border-radius: 25px; max-width: 40%;">
+    <div class="alert mt-4 mb-4 ms-3 me-3 rounded-4" role="alert" style="background-color: rgb(133, 255, 210);">
+        <div class="d-flex align-items-center justify-content-center text-align-center">
+            <i class="fas fa-check-circle me-3" style="font-size: 20px"></i> 
+            <h3 class="text-center" style="font-weight: 500">Thanh toán thành công</h3>
+        </div>
+    </div>
+    <div class="panel-body ms-3 me-3 ">
+        <div class="row">
+            <div class="col-md-4">
+                <p>Mã hóa đơn</p>
+            </div>
+            <div class="col-md-8">
+                <span class="form-control">{{ order_id }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <p>Số tiền </p>
+            </div>
+            <div class="col-md-8">
+                <span class="form-control" id="formattedPrice">{{ amount }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <p>Nội dung thanh toán</p>
+            </div>
+            <div class="col-md-8">
+                <span class="form-control">{{ order_desc }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <p>Mã giao dịch</p>
+            </div>
+            <div class="col-md-8">
+                <span class="form-control">{{ vnp_TransactionNo }}</span>
+            </div>
+        </div>
+        {% if vnp_ResponseCode == '00' %}
+        <div class="row">
+            <div class="col-md-4">
+                <p>Trạng thái:</p>
+            </div>
+            <div class="col-md-8">
+                <span class="form-control">Thành công</span>
+            </div>
+        </div>
+        <div class="text-center mt-3 mb-5">
+            <form action="{% url 'course:detail_course' course_id %}" method="post">
+                <button type="submit" class="blue-button">Hoàn thành</button>
+                {% csrf_token %}
+            </form>
+        </div>
+        {% else %}
+        <div class="row">
+            <div class="col-md-4">
+                <p>vnp_ResponseCode</p>
+            </div>
+            <div class="col-md-8">
+                <span class="form-control">{{ vnp_ResponseCode }} - Lỗi</span>
+            </div>
+        </div>
+        {% endif %}
+        {% if msg %}
+        <div class="row">
+            <div class="col-md-12">
+                <p class="alert alert-warning">{{ msg }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+    function formatNumber(number) {
+        // Chuyển số thành chuỗi và loại bỏ phần thập phân nếu có
+        var strNumber = number.toString().split('.')[0];
+        // Thêm dấu chấm ngăn cách mỗi 3 chữ số
+        return strNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    var price = "{{ amount }}";
+
+    var formattedPrice = formatNumber(price);
+    document.getElementById('formattedPrice').textContent = formattedPrice + ' VND';
+</script>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'course/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+
+
+<style>
+    .section-card {
+        border: 1px solid #dfdfdf;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .lesson-card {
+        border: 1px solid #dfdfdf;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .toggle-button {
+        cursor: pointer;
+        border: none;
+        padding: 5px 10px;
+    }
+
+    .section-card.expanded .lessons-list {
+        display: block;
+    }
+
+
+
+    .lesson-title:hover {
+        color: #ffbb3e;
+    }
+
+    .lesson-title {
+        color: black;
+    }
+
+    .small-button:hover {
+        background-color: #ffc862;
+    }
+
+    .small-button:disabled:hover {
+        background: #ebebeb;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="mt-4">
+                <h5 class="card-title fs-1 mb-2" style="font-weight: 700;color: #5E5DF0">{{ course.title }}</h5>
+                <div class="row fs-6 ms-1 mb-3" style="font-weight: 600;">
+                    {% if course.teacher.level == 0 %}
+                    Giảng viên:
+                    {% elif course.teacher.level == 1 %}
+                    Thạc sĩ:
+                    {% else %}
+                    Tiến sĩ:
+                    {% endif %}
+                    {{ course.teacher }}
+                </div>
+                {% if message and message == 'FOUND' %}
+                    {% if enrollment.completed %}
+                        <button class="small-button btn-lg rounded-pill me-3" style="background-color: rgb(189, 255, 224);" disabled>Đã hoàn thành
+                            <i class="ms-1 fas fa-circle-check"></i>
+                        </button>
+                    {% else %}
+                        <button class="small-button btn-lg rounded-pill me-3" disabled>Đã đăng kí
+                            <i class="ms-1 fas fa-circle-check"></i>
+                        </button>
+                    {% endif %}
+                {% else %}
+                <form action="{% url 'course:detail_course' course.id %}" method="post" style="display: inline-block;">
+                    {% csrf_token %}
+                    <button class="blue-button btn-lg rounded-pill me-3" type="submit">Đăng kí khóa học</button>
+                </form>
+                {% endif %}
+                <button disabled class="small-button me-2">
+                    <span class="fs-6">
+                        {{ course.sect }}
+                        <span class="fs-6"></span>
+                        <i class="ms-1 fas fa-book"></i>
+                    </span>
+                </button>
+                <button disabled class="small-button me-2">
+                    <span class="fs-6">
+                        {{ course.enroll }}
+                        <span class="fs-6"></span>
+                        <i class="ms-1 fas fa-user"></i>
+                    </span>
+                </button>
+                <button disabled class="small-button me-2">
+                    <span class="fs-6">
+                        {% if not course.vote %}
+                        Chưa có
+                        {% else %}
+                        {{ course.vote }}/5.0
+                        {% endif %}
+                        <span class="fs-6"><i class="fas fa-star"></i>
+                        </span>
+                </button>
+            </div>
+        </div>
+        <div class="col d-flex align-items-center justify-content-center">
+        </div>
+    </div>
+    <ul class="nav nav-tabs mt-5">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'course:detail_course' course.id %}" style="color: black;">Mục lục</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'course:overview_course' course.id %}" style="color: black;">Giới thiệu</a>
+        </li>
+        {% if enrollment %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'course:bookmark_course' course.id  %}" style="color: black;">Bookmark</a>
+        </li>  
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#"
+                style="font-weight: 600;color: #5E5DF0;">Chứng chỉ</a>
+        </li> 
+        {% endif %}
+    </ul>
+    <div class="container-fluid mt-3">
+        {% if enrollment.completed %}
+            <div class="alert alert-success rounded-4" style="background-color: rgb(189, 255, 224);">
+                Chúc mừng bạn đã hoàn thành khóa học!
+            </div>
+            <img src="{{enrollment.certificate}}" alt="certificate" class="w-100 rounded-4">
+        {% else %}
+            Hãy hoàn thành mọi khóa học để nhận chứng chỉ
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

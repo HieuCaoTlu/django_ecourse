@@ -1,0 +1,72 @@
+.blue-button {
+  background: #5E5DF0;
+  border-radius: 999px;
+  box-shadow: #5E5DF0 0 10px 20px -10px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  opacity: 1;
+  outline: 0 solid transparent;
+  padding: 12px 24px;
+  user-select: none;
+  -webkit-user-select: none;
+  width: fit-content;
+  word-break: break-word;
+  border: 0;
+  text-decoration: none;
+}
+
+.grey-button {
+  background: #f8f8f8;
+  border-radius: 999px;
+  box-shadow: #a2a2a2 0 10px 20px -10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  opacity: 1;
+  outline: 0 solid transparent;
+  padding: 12px 24px;
+  user-select: none;
+  -webkit-user-select: none;
+  width: fit-content;
+  word-break: break-word;
+  border: 0;
+  text-decoration: none;
+}
+
+.small-button {
+  background: #ebebeb;
+  border-radius: 999px;
+  box-sizing: border-box;
+  color: #000000;
+  font-size: 16px;
+  opacity: 1;
+  outline: 0 solid transparent;
+  padding: 12px 24px;
+  user-select: none;
+  -webkit-user-select: none;
+  width: fit-content;
+  word-break: break-word;
+  border: 0;
+  text-decoration: none;
+}
+
+.highlight-button {
+  background: #c7d2ff;
+  border-radius: 999px;
+  box-sizing: border-box;
+  color: #000000;
+  font-size: 16px;
+  opacity: 1;
+  outline: 0 solid transparent;
+  padding: 12px 24px;
+  user-select: none;
+  -webkit-user-select: none;
+  width: fit-content;
+  word-break: break-word;
+  border: 0;
+  text-decoration: none;
+}

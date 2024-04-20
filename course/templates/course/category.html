@@ -1,0 +1,116 @@
+{% extends 'course/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+
+
+<style>
+    .heading {
+        font-weight: bold;
+        color: #4f4fff;
+        text-align: center;
+        touch-action: manipulation;
+    }
+
+    .subheading {
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .course-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start; /* Chỉnh sửa lề trái */
+    }
+
+    .card {
+        border: 1px solid #dfdfdf;
+        border-radius: 20px;
+        flex-grow: 1;
+        max-width: 335px;
+        margin-right: 20px;
+        margin-bottom: 20px; /* Giới hạn chiều rộng tối đa của mỗi card */
+    }
+
+    .card img {
+        background-size: contain;
+        height: 180px;
+        width: 100%; /* Đảm bảo hình ảnh điền đầy card */
+        border-radius: 20px 20px 0 0; /* Bo tròn góc trên của hình ảnh */
+    }
+
+    .card-body {
+        margin: 0;
+    }
+
+    .card-footer {
+        background-color: transparent;
+        border: 0;
+        margin-top: auto; /* Đảm bảo rằng phần chân của card luôn nằm dưới cùng */
+    }
+</style>
+<div class="">
+    <h1 class="mt-4 fs-1 mb-0 heading">{{category.title}}</h1>
+    <p class="mt-2 fs-6 subheading" style="color: black">Trình độ: {{category.level}}</p>
+    <div class="d-flex justify-content-center">
+        {% if not logged %}
+        <a href="{% url 'course:login' %}" class="blue-button me-3">Đăng nhập</a>
+        <a href="{% url 'course:register' %}" class="grey-button" style="color: rgb(83, 83, 83);">Đăng kí</a>
+        {% else %}
+        <div class="d-flex">
+            <div class="highlight-button me-3">Xin chào, {{ student.name }}!</div>
+            <a href="{% url 'course:logout' %}" class="small-button me-3">Đăng xuất</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="ms-5 me-4">
+    <div class="mt-4 course-container">
+        {% if message == 'FOUND' %}
+        {% for course in all_courses %}
+        <div class="card rounded-5" style="border-radius: 20px;">
+            <a href="{% url 'course:detail_course' course.id %}" style="display: flex;">
+                <img src="{{ course.cover }}" class="card-img-top rounded-5 rounded-bottom-0" alt="{{ course.title }}">
+            </a>
+            <div class="card-body ms-1 me-1">
+                <h5 class="card-title fs-5">{{ course.title }}</h5>
+                <p class="card-text fs-11">
+                    {% if course.teacher.level == 0 %}
+                    Giảng viên:
+                    {% elif course.teacher.level == 1 %}
+                    Thạc sĩ:
+                    {% else %}
+                    Tiến sĩ:
+                    {% endif %}
+                    {{ course.teacher }}
+                </p>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center border-0 mb-2">
+                {% if course.user_enroll %}
+                    <a href="{% url 'course:detail_course' course.id %}" class="small-button">Đã tham gia</a>
+                {% else %}
+                    <a href="{% url 'course:detail_course' course.id %}" class="blue-button">Tham gia</a>
+                {% endif %}
+                <div class="me-2" style="color: #3e3e78">
+                    <span class="enroll-count fs-6 ms-1 me-2">
+                        {{ course.enroll }}
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <span class="enroll-count fs-6 ms-1">
+                        {% if not course.vote %}
+                        Chưa có
+                        {% else %}
+                        {{ course.vote }}/5.0
+                        {% endif %}
+                        <i class="fas fa-star"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

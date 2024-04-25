@@ -18,7 +18,12 @@ def get_client_ip(request):
     return ip
 
 
-def active_payment(request, form):
+def active_payment(request, form, course_id):
+    current_host = request.get_host()
+    if 'localhost' in current_host:
+        return_link = settings.VNPAY_RETURN_URL + f'/{course_id}'
+    else:
+        return_link = f'https://{current_host}/payment/payment_return/{course_id}'
     if form.is_valid():
         order_type = form.cleaned_data['order_type']
         order_id = form.cleaned_data['order_id']
@@ -45,7 +50,7 @@ def active_payment(request, form):
 
         vnp.requestData['vnp_CreateDate'] = datetime.now().strftime('%Y%m%d%H%M%S')  # 20150410063022
         vnp.requestData['vnp_IpAddr'] = ipaddr
-        vnp.requestData['vnp_ReturnUrl'] = settings.VNPAY_RETURN_URL
+        vnp.requestData['vnp_ReturnUrl'] = return_link
         vnpay_payment_url = vnp.get_payment_url(settings.VNPAY_PAYMENT_URL, settings.VNPAY_HASH_SECRET_KEY)
         return vnpay_payment_url
     else:

@@ -109,7 +109,7 @@ class DetailCourse(View):
             if enrollment:
                 temp = Lesson.objects.filter(section=section,active=True)
                 for lesson in temp:
-                    process = LessonProcess.objects.get(enrollment=enrollment, lesson=lesson)
+                    process, created = LessonProcess.objects.get_or_create(enrollment=enrollment, lesson=lesson)
                     lesson.unlock = True
                     lesson.completed = process.completed
                     lesson.score = process.score
@@ -154,7 +154,6 @@ class DetailCourse(View):
                     info = PaymentInfo.objects.get(pk=request.session.get('info_id', None))
                     info.enrollment = enrollment
                     info.save()
-                    del request.session['course_id']
                     del request.session['info_id']
                     lessons = Lesson.objects.filter(section__course=course)
                     for each in lessons:
@@ -164,7 +163,7 @@ class DetailCourse(View):
             except Student.DoesNotExist:
                 return HttpResponse("<script>alert('Bạn chưa đăng kí tài khoản học sinh');history.back()</script>")
         else:
-            return redirect('course:login')
+            return redirect('base:login')
    
 class DetailLesson(View):
     def get(self, request, course_id, section_id, lesson_id):

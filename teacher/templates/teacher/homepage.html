@@ -87,7 +87,7 @@
                         </div>
                         {% else %}
                             {% if course.validate %}
-                                <div class="validate-button">Đang xét duyệt</div>
+                                <div class="ms-3 validate-button" style="background-color: #ffdc4f;"">Đang xét duyệt</div>
                             {% else %}
                                 <div class="ms-3 validate-button" style="background-color: #e4e4e4;">Chưa đăng tải</div>
                             {% endif %}
@@ -95,6 +95,18 @@
                     </div>
                 </div>
                 <div class="col-auto">
+                    <div class="w-100 d-flex">
+                        {% if not course.validate %}
+                        <form action="" method="post">
+                            {% csrf_token %} 
+                            <input type="hidden" name="course" value="{{course.id}}">
+                            <button class="small-button me-3" type="submit">
+                                <span class="fs-6">
+                                    Yêu cầu xét duyệt
+                                </span>
+                            </button>
+                        </form>
+                        {% endif %}
                     <a href="{% url 'teacher:update_course' course.id %}">
                         <button class="small-button">
                             <span class="fs-6">
@@ -102,6 +114,7 @@
                             </span>
                         </button>
                     </a>
+                    </div>
                 </div>
             </div>
         {% endfor %}

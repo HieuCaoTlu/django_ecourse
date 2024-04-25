@@ -1,17 +1,10 @@
-from django.forms import formset_factory, inlineformset_factory
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
-from base.forms import LessonAdminForm
 from base.models import *
 from django.db.models import Count, Avg, Case, When
-
 from onlinecourse import settings
-from .forms import CourseForm, SectionFormSet, SectionForm, LessonFormSet
-from django.views.generic import ListView
-from django.views.generic.edit import (
-    CreateView, UpdateView
-)
+from .forms import CourseForm, SectionFormSet, SectionForm, LessonFormSet, DescriptionFormSet
+from django.views.generic.edit import CreateView, UpdateView
 
 class HomepageTeacher(View):
 
@@ -40,6 +33,20 @@ class HomepageTeacher(View):
                 'active_length': Course.objects.filter(teacher=teacher, active=True).count()
                 }
                 return render(request, template_name='teacher/homepage.html', context=content)
+            else:
+                return redirect('base:login')
+        else:
+            return redirect('base:login')
+        
+    def post(self, request):
+        if request.user.is_authenticated:
+            teacher = Teacher.objects.filter(pk=request.user.id).first()
+            if teacher:
+                teacher.name = request.user.last_name
+                course = Course.objects.get(pk=request.POST.get('course'))
+                course.validate = True
+                course.save()
+                return redirect('teacher:homepage')
             else:
                 return redirect('base:login')
         else:
@@ -78,6 +85,14 @@ class CourseInline():
             section.course = self.object
             section.save()
 
+    def formset_descriptions_valid(self, formset):
+        descriptions = formset.save(commit=False)
+        for obj in formset.deleted_objects:
+            obj.delete()
+        for description in descriptions:
+            description.course = self.object
+            description.save()
+
 class CourseCreate(CourseInline, CreateView):
 
     def get_context_data(self, **kwargs):
@@ -89,10 +104,12 @@ class CourseCreate(CourseInline, CreateView):
         if self.request.method == "GET":
             return {
                 'sections': SectionFormSet(prefix='sections'),
+                'descriptions': DescriptionFormSet(prefix='descriptions')
             }
         else:
             return {
                 'sections': SectionFormSet(self.request.POST or None, prefix='sections'),
+                'descriptions': DescriptionFormSet(self.request.POST or None, prefix='descriptions')
             }
 
 class CourseUpdate(CourseInline, UpdateView):
@@ -105,6 +122,7 @@ class CourseUpdate(CourseInline, UpdateView):
     def get_named_formsets(self):
         return {
             'sections': SectionFormSet(self.request.POST or None, instance=self.object, prefix='sections'),
+            'descriptions': DescriptionFormSet(self.request.POST or None, instance=self.object, prefix='descriptions')
         }
 
 class SectionInline():

@@ -1,9 +1,9 @@
 from io import BytesIO
 from django.forms import ModelForm, TextInput, inlineformset_factory, Select, FileInput
-from base.models import Course, Section, Lesson
+from base.models import Course, Section, Lesson, CourseDescription
 from onlinecourse import settings
 from PIL import Image
-from base.forms import LessonAdminForm
+from base.forms import LessonAdminForm, CourseDescForm
 
 class CourseForm(ModelForm):
     class Meta:
@@ -59,6 +59,20 @@ class LessonFormInline(ModelForm):
         model = Lesson
         fields = ['title','document_type','file']
 
+class DescriptionForm(ModelForm):
+
+    class Meta:
+        model = CourseDescription
+        fields = '__all__'
+        widgets = {
+            'content': TextInput(
+                attrs={
+                    'class': 'form-control'
+                    }
+                ),
+        }
+
+
 SectionFormSet = inlineformset_factory(
     Course, Section, form=SectionFormInline,
     extra=1, can_delete=True, can_delete_extra=True
@@ -66,5 +80,10 @@ SectionFormSet = inlineformset_factory(
 
 LessonFormSet = inlineformset_factory(
     Section, Lesson, form=LessonAdminForm,
+    extra=1, can_delete=True, can_delete_extra=True
+)
+
+DescriptionFormSet = inlineformset_factory(
+    Course, CourseDescription, form=DescriptionForm,
     extra=1, can_delete=True, can_delete_extra=True
 )

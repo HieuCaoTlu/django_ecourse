@@ -148,9 +148,13 @@
                             {% endif %}
                         </div>
                         <div class="col-auto">
-                            <a href="{{ course.id }}/{{ section.id }}/{{ lesson.id }}" style="text-decoration: none;">
+                            {% if lesson.unlock %}
+                                <a href="{{ course.id }}/{{ section.id }}/{{ lesson.id }}" style="text-decoration: none;">
+                                    <p class="fs-5 lesson-title" style="margin: 0px;">{{ lesson.title }}</p>
+                                </a>
+                            {% else %}
                                 <p class="fs-5 lesson-title" style="margin: 0px;">{{ lesson.title }}</p>
-                            </a>
+                            {% endif %}
                             <p style="margin: 0px;font-weight: 300;font-size: 13px;">Đính kèm: {{ lesson.document_type }}</p>
                         </div>
                         <div class="col-auto ms-auto d-flex align-items-center">

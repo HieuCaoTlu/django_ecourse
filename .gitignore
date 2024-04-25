@@ -3,3 +3,4 @@ migrations/
 documents/
 courses/
 category/
+**/__pycache__/

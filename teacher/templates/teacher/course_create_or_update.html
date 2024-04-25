@@ -23,6 +23,64 @@
         </div>
         {% endfor %}
     </div>
+
+    {% with named_formsets.descriptions as formset %}
+    {{ formset.management_form }}
+    <script type="text/html" id="descriptions-template">  // id="inlineformsetname-template"
+                // id='inlineformsetname-__prefix__' 
+                <tr id="descriptions-__prefix__" class= hide_all>
+                    {% for fields in formset.empty_form.hidden_fields %}
+                        {{ fields }}
+                    {% endfor %}
+                
+                    {% for fields in formset.empty_form.visible_fields %}
+                        <td>{{fields}}</td>
+                    {% endfor %}
+                </tr>
+            </script>
+    <div class="table-responsive card mt-4">
+        <div class="card-header card-header-secondary">
+            <h4 class="card-title">Add descriptions</h4>
+        </div>
+        <table class="table card-header">
+            <thead class="text-secondary">
+                <th>Mô tả <span style="color: red;" class="required">*</span></th>
+                <th>Mục tiêu 1</th>
+                <th>Mục tiêu 2</th>
+                <th>Mục tiêu 3</th>
+                <th>Mục tiêu 4</th>
+                <th>Mục tiêu 5</th>
+                <th>Mục tiêu 6</th>
+                <th>Xóa?</th>
+            </thead>
+            <tbody id="item-descriptions"> 
+                {% for error in formset.non_form_errors %}
+                <span style="color: red">{{ error }}</span>
+                {% endfor %}
+                {% for formss in formset %}
+                {{ formss.management_form }}
+                <tr id="descriptions-{{ forloop.counter0 }}" class=hide_all>
+                    {{ formss.id }}
+                    {% for field in formss.visible_fields %}
+                    <td>
+                        {{field}}
+                        {% for error in field.errors %}
+                        <span style="color: red">{{ error }}</span>
+                        {% endfor %}
+
+                        {% comment %} {{ field.DELETE }} {% endcomment %}
+                    </td>
+                    {% endfor %}
+                    {% comment %} for delete {% endcomment %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endwith %}
+    
+
     {% with named_formsets.sections as formset %}
     {{ formset.management_form }}
     <script type="text/html" id="sections-template">  // id="inlineformsetname-template"
@@ -98,6 +156,19 @@
 
             // update form count
             $('#id_sections-TOTAL_FORMS').attr('value', count + 1);
+        });
+    });
+
+    $(document).ready(function () {
+        $('.add-descriptions').click(function (ev) {
+            ev.preventDefault();
+            var count = $('#item-descriptions').children().length;
+            var tmplMarkup = $('#descriptions-template').html();
+            var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
+            $('#item-descriptions').append(compiledTmpl);
+
+            // update form count
+            $('#id_descriptions-TOTAL_FORMS').attr('value', count + 1);
         });
     });
 </script>

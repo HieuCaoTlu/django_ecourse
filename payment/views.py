@@ -14,23 +14,21 @@ class Payment(View):
         try:
             student = Student.objects.get(pk=request.user.id)
         except Student.DoesNotExist:
-            return redirect('course:login')
+            return redirect('base:login')
         return render(request, "payment/payment.html", {"title": "Thanh toán", "course":course, "student":student})
     
     def post(self, request, course_id):
         form = PaymentForm(request.POST)
-        result = active_payment(request,form)
+        result = active_payment(request,form,course_id)
         if result:
-            request.session['course_id'] = course_id
             return redirect(result)
         return HttpResponse('Failed')
     
 class PaymentReturn(View):
     
-    def get(self, request):
+    def get(self, request, course_id):
         result = payment_return(request)
         response = request.GET
-        course_id = request.session.get('course_id', None)
         content = {
             'order_id':response['vnp_TxnRef'],
             'amount':int(response['vnp_Amount']) / 100,

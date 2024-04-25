@@ -1,5 +1,4 @@
-{% extends 'course/base.html' %}
-{% load static %}
+{% extends 'base/base.html' %}
 {% block content %}
 {% load widget_tweaks %}
 <style>
@@ -15,9 +14,8 @@
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-<link rel="stylesheet" href="{% static 'css/course.css' %}">
 <div class="container mt-5" style="border: 1px solid #dfdfdf;border-radius: 25px;max-width: 30%;">
-    <h2 class="text-center mt-4" style="font-weight: 500">Đăng ký</h2>
+    <h2 class="text-center mt-4" style="font-weight: 500">Đăng ký {{role}}</h2>
     <div class="row justify-content-center">
         <div class="col-md-10 mt-4">
             {% if message and message == 'FAIL' %}
@@ -35,12 +33,21 @@
                     <option value="{{ gender_choice.0 }}">{{ gender_choice.1 }}</option>
                     {% endfor %}
                 </select>
-                <select class="form-control mb-3" name="major">
-                    <option value="">-- Chọn chuyên ngành --</option>
-                    {% for major_choice in form.major.field.choices %}
-                    <option value="{{ major_choice.0 }}">{{ major_choice.1 }}</option>
-                    {% endfor %}
-                </select>
+                {% if form.major %}
+                    <select class="form-control mb-3" name="major">
+                        <option value="">-- Chọn chuyên ngành --</option>
+                        {% for major_choice in form.major.field.choices %}
+                        <option value="{{ major_choice.0 }}">{{ major_choice.1 }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <select class="form-control mb-3" name="level">
+                        <option value="">-- Chọn trình độ --</option>
+                        {% for level_choice in form.level.field.choices %}
+                        <option value="{{ level_choice.0 }}">{{ level_choice.1 }}</option>
+                        {% endfor %}
+                    </select>                        
+                {% endif %}
                 {% render_field form.birth_date id="datepicker" class="form-control mb-3" placeholder="Ngày sinh" %}
                 {% render_field form.email class="form-control mb-3" placeholder="Email" type="email" %}
                 {% render_field form.phone class="form-control mb-3" placeholder="Điện thoại" type="text" %}

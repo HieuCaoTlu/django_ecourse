@@ -1,5 +1,4 @@
-{% extends 'course/base.html' %}
-{% load static %}
+{% extends 'base/base.html' %}
 {% block content %}
 {% load widget_tweaks %}
 <style>
@@ -15,7 +14,6 @@
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-<link rel="stylesheet" href="{% static 'css/course.css' %}">
 <div class="container mt-5" style="border: 1px solid #dfdfdf;border-radius: 25px;max-width: 30%;">
     <h2 class="text-center mt-4" style="font-weight: 500">Thông tin cá nhân</h2>
     <div class="row justify-content-center">
@@ -30,7 +28,11 @@
                     {% render_field form.last_name|append_attr:"disabled" class="form-control col ms-2" placeholder="Tên" type="text" %}
                 </div>
                 {% render_field form.gender|append_attr:"disabled" class="form-control col me-2 mb-3" placeholder="Giới tính" type="text" %}
-                {% render_field form.major|append_attr:"disabled" class="form-control col me-2 mb-3" placeholder="Chuyên ngành" type="text" %}
+                {% if form.major %}
+                    {% render_field form.major|append_attr:"disabled" class="form-control col me-2 mb-3" placeholder="Chuyên ngành" type="text" %}
+                {% else %}
+                    {% render_field form.level|append_attr:"disabled" class="form-control col me-2 mb-3" placeholder="Trình độ" type="text" %}
+                {% endif %}
                 {% render_field form.birth_date|append_attr:"disabled" id="datepicker" class="form-control col me-2 mb-3" placeholder="Ngày sinh" type="text" %}
                 {% render_field form.email|append_attr:"disabled" class="form-control mb-3" placeholder="Email" type="email" %}
                 {% render_field form.phone|append_attr:"disabled" class="form-control mb-3" placeholder="Điện thoại" type="text" %}

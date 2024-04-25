@@ -1,0 +1,6 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<h1>Bạn muốn đăng kí tài khoản với tư cách?</h1>
+<a href="{% url 'base:register' 'teacher' %}">Giảng viên</a>
+<a href="{% url 'base:register' 'student' %}">Học viên</a>
+{% endblock %}

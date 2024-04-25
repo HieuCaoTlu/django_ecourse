@@ -1,0 +1,104 @@
+{% extends "teacher/base.html" %}
+{% block content %}
+<form enctype="multipart/form-data" class="container" method="post" id="course_form">
+    {% csrf_token %}
+    <div class="card">
+        <div class="card-header card-header-secondary">
+            <h4 class="card-title">Add Course</h4>
+        </div>
+        {% for field in form %}
+        <div class="form-group card-body">
+            <label>{{field.label}}</label>
+            {% if field.field.required %}
+            <span style="color: red;" class="required">*</span>
+            {% endif %}
+
+            {{field}}
+            {% if field.help_text %}
+            <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    {% with named_formsets.sections as formset %}
+    {{ formset.management_form }}
+    <script type="text/html" id="sections-template">  // id="inlineformsetname-template"
+                // id='inlineformsetname-__prefix__' 
+                <tr id="sections-__prefix__" class= hide_all>
+                    {% for fields in formset.empty_form.hidden_fields %}
+                        {{ fields }}
+                    {% endfor %}
+                
+                    {% for fields in formset.empty_form.visible_fields %}
+                        <td>{{fields}}</td>
+                    {% endfor %}
+                </tr>
+            </script>
+    <div class="table-responsive card mt-4">
+        <div class="card-header card-header-secondary">
+            <h4 class="card-title">Add Sections</h4>
+        </div>
+        <table class="table card-header">
+            <thead class="text-secondary">
+                <th>Tên phần học <span style="color: red;" class="required">*</span></th>
+                <th>Active</th>
+                <th>Xóa?</th>
+                <th>Thêm bài học</th>
+            </thead>
+            <tbody id="item-sections"> 
+                {% for error in formset.non_form_errors %}
+                <span style="color: red">{{ error }}</span>
+                {% endfor %}
+                {% for formss in formset %}
+                {{ formss.management_form }}
+                <tr id="sections-{{ forloop.counter0 }}" class=hide_all>
+                    {{ formss.id }}
+                    {% for field in formss.visible_fields %}
+                    <td>
+                        {{field}}
+                        {% for error in field.errors %}
+                        <span style="color: red">{{ error }}</span>
+                        {% endfor %}
+
+                        {% comment %} {{ field.DELETE }} {% endcomment %}
+                    </td>
+                    {% endfor %}
+                    {% comment %} for delete {% endcomment %}
+                    {% if formss.instance.pk %}
+                        <td>
+                            <a type="button" class="btn btn-primary" data-toggle="modal" href="{% url 'teacher:update_section' formss.instance.pk %}">
+                                Chỉnh sửa
+                            </a>                  
+                        </td>            
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="#" id="add-section-button" class="btn btn-secondary add-sections">Add More</a>
+    </div>
+
+    {% endwith %}
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-secondary btn-block mt-2">Xác nhận</button>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        $('.add-sections').click(function (ev) {
+            ev.preventDefault();
+            var count = $('#item-sections').children().length;
+            var tmplMarkup = $('#sections-template').html();
+            var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
+            $('#item-sections').append(compiledTmpl);
+
+            // update form count
+            $('#id_sections-TOTAL_FORMS').attr('value', count + 1);
+        });
+    });
+</script>
+{% endblock %}

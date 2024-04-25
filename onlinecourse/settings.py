@@ -18,8 +18,8 @@ env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-SESSION_COOKIE_AGE = 3600
-SESSION_EXPIRE_SECONDS = 3600
+SESSION_COOKIE_AGE = 7200
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
@@ -30,7 +30,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = "django-insecure-jr$*c0mu(pw1r@5@v-#-#(ko)q)#nt7g^$de4fh@96on$i0z-*"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL= 'base.User'

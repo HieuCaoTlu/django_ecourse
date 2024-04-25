@@ -5,10 +5,6 @@ from .tests import *
 app_name = 'course'
 urlpatterns = [
     path('',HomepageCourse.as_view(),name='homepage'),
-    path('login',LoginStudent.as_view(),name='login'),
-    path('logout',LogoutStudent.as_view(),name='logout'),
-    path('register',RegisterStudent.as_view(),name='register'),
-    path('personal',PersonalStudent.as_view(),name='personal'),
     path('course/<int:course_id>', DetailCourse.as_view(), name='detail_course'),
     path('category/<int:category_id>', CategoryCourse.as_view(), name='category'),
     path('course/<int:course_id>/overview', OverviewCourse.as_view(), name='overview_course'),

@@ -1,10 +1,9 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
 from django.db.models import Count, Avg, Case, When
-from base.forms import StudentCreationForm, StudentChangeForm
+from base.forms import StudentChangeForm
 from base.models import *
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login, logout 
 from django.db.models import OuterRef, Exists, Value
 from payment.models import PaymentInfo
 from .certificate import make_certificates
@@ -166,46 +165,7 @@ class DetailCourse(View):
                 return HttpResponse("<script>alert('Bạn chưa đăng kí tài khoản học sinh');history.back()</script>")
         else:
             return redirect('course:login')
-    
-class LoginStudent(View):
-
-    def get(self, request):
-        content = {
-            'message':'LOGIN',   
-        }
-        return render(request,template_name='course/login.html',context=content)
-    
-    def post(self, request):
-        username = request.POST.get('username')
-        psw = request.POST.get('psw')
-        user = authenticate(username=username, password=psw)
-        if not user:
-            content = {
-                'message':'FAIL',   
-            }
-            return render(request,template_name='course/login.html',context=content)
-        login(request, user)
-        return redirect('course:homepage')
-    
-class LogoutStudent(View):
-
-    def get(self, request):
-        logout(request)
-        return redirect('course:login')
-    
-class RegisterStudent(View):
-    def get(self, request):
-        form = StudentCreationForm() 
-        return render(request, 'course/register.html', {'form': form, 'message':'REGISTER'})  
-    
-    def post(self, request):
-        form = StudentCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('course:homepage')
-        form = StudentCreationForm() 
-        return render(request, 'course/register.html', {'form': form, 'message':'FAIL'})
-    
+   
 class DetailLesson(View):
     def get(self, request, course_id, section_id, lesson_id):
         try:
@@ -401,20 +361,3 @@ class CertificateCourse(View):
         }
         return render(request,template_name='course/certificate.html',context=content)
     
-class PersonalStudent(View):
-    def get(self, request):
-        try:
-            student = Student.objects.get(pk=request.user.id)
-        except Student.DoesNotExist:
-            return HttpResponse("<script>alert('Bạn chưa đăng kí');history.back()</script>")
-        form = StudentChangeForm(instance=student)
-        return render(request, 'course/personal.html', {'form': form, 'message':'REGISTER'})  
-    
-    def post(self, request):
-        student = Student.objects.get(pk=request.user.id)
-        form = StudentChangeForm(request.POST, instance=student)
-        if form.is_valid():
-            form.save()
-            return redirect('course:personal')
-        form = StudentChangeForm(instance=student) 
-        return render(request, 'course/personal.html', {'form': form, 'message':'FAIL'})

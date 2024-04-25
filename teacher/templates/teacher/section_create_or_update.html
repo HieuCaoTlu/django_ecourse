@@ -1,0 +1,96 @@
+{% extends "teacher/base.html" %}
+{% block content %}
+<form enctype="multipart/form-data" class="container" method="post" id="section_form">
+    {% csrf_token %}
+    <div class="card">
+        <div class="card-header card-header-secondary">
+            <h4 class="card-title">Add Section</h4>
+        </div>
+        {% for field in form %}
+        <div class="form-group card-body">
+            <label>{{field.label}}</label>
+            {% if field.field.required %}
+            <span style="color: red;" class="required">*</span>
+            {% endif %}
+
+            {{field}}
+            {% if field.help_text %}
+            <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    {% with named_formsets.lessons as formset %}
+    {{ formset.management_form }}
+    <script type="text/html" id="lessons-template">  // id="inlineformsetname-template"
+                // id='inlineformsetname-__prefix__' 
+                <tr id="lessons-__prefix__" class= hide_all>
+                    {% for fields in formset.empty_form.hidden_fields %}
+                        {{ fields }}
+                    {% endfor %}
+                
+                    {% for fields in formset.empty_form.visible_fields %}
+                        <td>{{fields}}</td>
+                    {% endfor %}
+                </tr>
+            </script>
+    <div class="table-responsive card mt-4">
+        <div class="card-header card-header-secondary">
+            <h4 class="card-title">Add lessons</h4>
+        </div>
+        <table class="table card-header">
+            <thead class="text-secondary">
+                <th>Tên bài học <span style="color: red;" class="required">*</span></th>
+                <th>Loại file</th>
+                <th>Tải file lên</th>
+            </thead>
+            <tbody id="item-lessons"> 
+                {% for error in formset.non_form_errors %}
+                <span style="color: red">{{ error }}</span>
+                {% endfor %}
+                {% for formss in formset %}
+                {{ formss.management_form }}
+                <tr id="lessons-{{ forloop.counter0 }}" class=hide_all>
+                    {{ formss.id }}
+                    {% for field in formss.visible_fields %}
+                    <td>
+                        {{field}}
+                        {% for error in field.errors %}
+                        <span style="color: red">{{ error }}</span>
+                        {% endfor %}
+
+                        {% comment %} {{ field.DELETE }} {% endcomment %}
+                    </td>
+                    {% endfor %}
+                    {% comment %} for delete {% endcomment %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="#" id="add-lesson-button" class="btn btn-secondary add-lessons">Add More</a>
+    </div>
+
+    {% endwith %}
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-secondary btn-block mt-2">Xác nhận</button>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        $('.add-lessons').click(function (ev) {
+            ev.preventDefault();
+            var count = $('#item-lessons').children().length;
+            var tmplMarkup = $('#lessons-template').html();
+            var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
+            $('#item-lessons').append(compiledTmpl);
+
+            // update form count
+            $('#id_lessons-TOTAL_FORMS').attr('value', count + 1);
+        });
+    });
+</script>
+{% endblock %}

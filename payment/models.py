@@ -3,7 +3,7 @@ from django.db import models
 from base.models import Enrollment
 # Create your models here.
 class PaymentInfo(models.Model):
-    enrollment = models.OneToOneField(Enrollment,on_delete=models.PROTECT,null=True)
+    enrollment = models.OneToOneField(Enrollment,on_delete=models.SET_NULL,null=True)
     amount = models.IntegerField(default=0)
     code = models.CharField(max_length=50, default='')
     bank = models.CharField(max_length=50)

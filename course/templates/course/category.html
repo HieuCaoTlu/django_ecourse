@@ -1,9 +1,5 @@
 {% extends 'course/base.html' %}
-{% load static %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/course.css' %}">
-
-
 <style>
     .heading {
         font-weight: bold;
@@ -52,17 +48,6 @@
 <div class="">
     <h1 class="mt-4 fs-1 mb-0 heading">{{category.title}}</h1>
     <p class="mt-2 fs-6 subheading" style="color: black">Trình độ: {{category.level}}</p>
-    <div class="d-flex justify-content-center">
-        {% if not logged %}
-        <a href="{% url 'course:login' %}" class="blue-button me-3">Đăng nhập</a>
-        <a href="{% url 'course:register' %}" class="grey-button" style="color: rgb(83, 83, 83);">Đăng kí</a>
-        {% else %}
-        <div class="d-flex">
-            <div class="highlight-button me-3">Xin chào, {{ student.name }}!</div>
-            <a href="{% url 'course:logout' %}" class="small-button me-3">Đăng xuất</a>
-        </div>
-        {% endif %}
-    </div>
 </div>
 
 <div class="ms-5 me-4">

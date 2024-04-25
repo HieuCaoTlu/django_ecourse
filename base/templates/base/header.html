@@ -1,35 +1,58 @@
+{% load static %}
 <style>
   .navbar-nav .nav-link.active {
     background-color: #5E5DF0;
     color: #fff;
   }
 </style>
-<nav class="navbar navbar-expand-lg">
-  <div class="container-fluid">
-    <div class="d-flex justify-content-center align-items-center w-100">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link header-nav rounded-4 me-3 px-3" id="header_course" href="{% url 'course:homepage' %}">Khóa học</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link header-nav rounded-4 me-3 px-3" id="header_teacher" href="{% url 'teacher:homepage' %}">Giảng viên</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link header-nav rounded-4 me-3 px-3" id="header_forum" href="{% url 'forum:homepage' %}">Diễn đàn</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link header-nav rounded-4 me-3 px-3" id="header_admin" href="/admin">Quản trị</a>
-          </li>
+<section class="">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img class="img-fluid" src="{% static 'logo.png' %}" alt="" style="width: 120px;">
+      </a>
+      <div class="collapse navbar-collapse position-absolute top-50 start-50 translate-middle">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link header-nav rounded-4 me-3 px-3" id="header_course" href="{% url 'course:homepage' %}">Khóa học</a></li>
+          <li class="nav-item"><a class="nav-link header-nav rounded-4 me-3 px-3" id="header_teacher" href="{% url 'teacher:homepage' %}">Giảng viên</a></li>
+          <li class="nav-item"><a class="nav-link header-nav rounded-4 me-3 px-3" id="header_forum" href="{% url 'forum:homepage' %}">Diễn đàn</a></li>
+          <li class="nav-item"><a class="nav-link header-nav rounded-4 me-3 px-3" id="header_admin" href="/admin">Quản trị</a></li>
         </ul>
       </div>
-    </div>
+      {% if request.user.id %}
+          <div class="d-flex">
+              <div class="d-none d-lg-block"><a class="btn btn-outline-secondary rounded-4" href="{% url 'base:personal' %}">Thông tin</a></div>
+              <div class="d-none d-lg-block"><a class="btn btn-outline-secondary rounded-4 ms-2" href="{% url 'base:logout' %}">Đăng xuất</a></div>
+          </div>
+      {% else %}
+          <div class="d-none d-lg-block"><a class="btn btn-outline-secondary rounded-4" href="{% url 'base:login' %}">Đăng nhập</a></div>
+      {% endif %}
+  </nav>
+  <div class="d-none navbar-menu position-fixed top-0 start-0 bottom-0 w-75 mw-xs" style="z-index: 9999;">
+    <div class="navbar-close navbar-backdrop position-fixed top-0 start-0 end-0 bottom-0 bg-dark" style="opacity: 75%;"></div>
+    <nav class="position-relative h-100 w-100 d-flex flex-column justify-content-between py-8 px-8 bg-white overflow-auto">
+      <div class="d-flex align-items-center">
+        <a class="me-auto h4 mb-0 text-decoration-none" href="#">
+          <img class="img-fluid" src="#" alt="">
+        </a>
+        <a class="navbar-close" href="#">
+          <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 18L18 6M6 6L18 18" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      </div>
+      <div class="py-16">
+        <ul class="nav flex-column">
+          <li class="nav-item mb-8"><a class="nav-link text-dark" href="#">Features</a></li>
+          <li class="nav-item mb-8"><a class="nav-link text-dark" href="#">Solutions</a></li>
+          <li class="nav-item mb-8"><a class="nav-link text-dark" href="#">Resources</a></li>
+          <li class="nav-item"><a class="nav-link text-dark" href="#">Pricing</a></li>
+        </ul>
+      </div>
+      <div><a class="btn w-100 fw-medium" href="#">Login</a><a class="btn w-100 btn-primary" href="#">Sign in</a></div>
+    </nav>
   </div>
-</nav>
+</section>
 <script>
   $(document).ready(function() {
     var currentUrl = window.location.href;

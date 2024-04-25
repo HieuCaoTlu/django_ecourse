@@ -23,7 +23,9 @@ class Teacher(User):
     CHOICE = (
         (0, 'Giảng viên'),    
         (1, 'Thạc Sĩ'),    
-        (2, 'Tiến sĩ'),    
+        (2, 'Tiến sĩ'),
+        (3, 'Chuyên viên'),
+        (4, 'Kỹ sư công nghệ')    
     )
     level = models.IntegerField(choices=CHOICE, default=0)
     earning = models.IntegerField(default=0, blank=True)
@@ -76,12 +78,13 @@ class Category(models.Model):
 
 
 class Course(Material):
-    cover = models.URLField(default='')
+    cover = models.URLField(default='',blank=True)
     image = models.ImageField(upload_to='courses/', blank=True, null=True)
     price = models.IntegerField(default=0,blank=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,blank=True)
     active = models.BooleanField(default=False,blank=True)
+    validate = models.BooleanField(default=False,blank=True)
 
     class Meta:
         verbose_name = 'Khóa học'
@@ -113,7 +116,7 @@ class Lesson(Material):
 
 
 class Enrollment(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     vote = models.IntegerField(default=0, blank=True)
     enroll_date = models.DateTimeField(auto_now_add=True)

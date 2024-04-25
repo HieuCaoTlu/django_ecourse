@@ -1,7 +1,5 @@
-{% extends 'course/base.html' %}
-{% load static %}
+{% extends 'base/base.html' %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/course.css' %}">
 
 <div class="container mt-5" style="border: 1px solid #dfdfdf;border-radius: 25px;max-width: 30%;">
     <h2 class="text-center mt-4" style="font-weight: 500">Đăng nhập</h2>
@@ -28,7 +26,7 @@
     </div>
     <div class="row mt-5 mb-5">
         <div class="col text-center">
-            <a href="{% url 'course:register' %}" style="text-decoration: none;color:#5E5DF0;font-weight: 600;">Bạn chưa đăng kí ? Đăng kí ngay</a>
+            <a href="{% url 'base:role' %}" style="text-decoration: none;color:#5E5DF0;font-weight: 600;">Bạn chưa đăng kí ? Đăng kí ngay</a>
         </div>
     </div>
 </div>

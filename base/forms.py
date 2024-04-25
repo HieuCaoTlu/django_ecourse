@@ -34,12 +34,12 @@ class TeacherCreationForm(UserCreationForm):
 
     class Meta:
         model = Teacher
-        fields = UserCreationForm.Meta.fields + ('earning', 'level')
+        fields = UserCreationForm.Meta.fields + ('level','username','email')
 
 class TeacherChangeForm(UserChangeForm):
     class Meta:
         model = Teacher
-        fields = UserChangeForm.Meta.fields + ('earning','level')
+        fields = UserChangeForm.Meta.fields + ('level','email')
 
 class StudentCreationForm(UserCreationForm):
     def save(self, commit=True):
@@ -84,13 +84,12 @@ class CourseAdminForm(forms.ModelForm):
         if commit:
             course.active = False
             course.save()
-            os.remove(image.path)
         return course
     
 class LessonAdminForm(forms.ModelForm):
     class Meta:
         model = Lesson
-        fields = '__all__'
+        fields = ['title','document_type','file']
 
     def save(self, commit=True):
         lesson = super().save(commit=False)
@@ -102,7 +101,6 @@ class LessonAdminForm(forms.ModelForm):
             lesson.document = storage.child(storage_path).get_url(None)
         if commit:
             lesson.save()
-            os.remove(file.path)
         return lesson
     
 class CategoryAdminForm(forms.ModelForm):
@@ -132,3 +130,14 @@ class CategoryAdminForm(forms.ModelForm):
             category.save()
             os.remove(image.path)
         return category
+    
+class SectionAdminForm(forms.ModelForm):
+    class Meta:
+        model = Section
+        fields = '__all__'
+
+class CourseDescForm(forms.ModelForm):
+    class Meta:
+        model = CourseDescription
+        fields = '__all__'    
+    

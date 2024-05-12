@@ -24,7 +24,7 @@
         border: 1px solid #dfdfdf;
         border-radius: 20px;
         flex-grow: 1;
-        max-width: 305px;
+        max-width: 300px;
         margin-left: 10px;
         margin-right: 10px;
         margin-bottom: 20px; /* Giới hạn chiều rộng tối đa của mỗi card */
@@ -128,10 +128,10 @@
             {% endfor %}
             {% endif %}
         </div>
-        <div class="mt-4 course-container" id="categories-content" style="display: none;">
+        <div class="mt-4 course-container align-items-center justify-content-center text-center" id="categories-content" style="display: none;">
             {% for category in all_categories %}
             <a href="{% url 'course:category' category.id %}">
-                <div class="position-relative me-4" style="width: 335px; height: 150px;">
+                <div class="position-relative" style="width: 300px; height: 150px;margin-left: 10px;margin-right: 10px;">
                     <img src="{{category.cover}}" class="rounded-5" style="width: 100%; height: 100%;" alt="...">
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-dark bg-opacity-50 text-center text-light rounded-5">
                         <div class="fs-2" style="font-weight: 700;">

@@ -10,7 +10,8 @@ from base.models import Student, Teacher
 class Login(View):
 
     def get(self, request):
-        return render(request,'base/login.html')
+        valid = request.session.pop('login_valid',None)
+        return render(request,'base/login.html',{'valid':valid})
     
     def post(self, request):
         username = request.POST.get('username')
@@ -50,7 +51,8 @@ class Register(View):
             form = TeacherCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request,'base/login.html',{'valid':'REGISTER_SUCCESS'})
+            request.session['login_valid'] = 'REGISTER_SUCCESS'
+            return redirect('base:login')
         if role_type == 'student':
             form = StudentCreationForm()
         else:

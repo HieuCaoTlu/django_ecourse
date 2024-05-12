@@ -1,0 +1,202 @@
+{% extends 'forum/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}"> 
+<link rel="stylesheet" href="{% static 'forum.css' %}">
+<style>
+    .noidung {
+        resize:none;
+    }
+</style>
+<div class="w-100">
+    <div class="row">
+        <div class="col-md-3"></div> <!-- Đây là cột trống bên trái, chiếm 3/12 phần -->
+
+{% comment %} Bài đăng {% endcomment %}
+
+        <div class="col-md-6">
+            <div>
+                <div class="w-100 py-4 justify-content-center">
+                    <div class="row border rounded-4 p-4">
+                <div class="col d-flex ">
+                    <div class="col-auto user img mr-4">
+                        {% if not is_student %}
+                        {% if post.user.gender == 0 %}
+                            <img src='{% static 'img/teacher_man.png' %}' alt='Meow'> </img>
+                        {% else %}
+                            <img src='{% static 'img/teacher_woman.png' %}' alt='Meow'> </img>
+                        {% endif %}
+                    {% else %}
+                        {% if post.user.gender == 0 %}
+                            <img src='{% static 'img/student_man.png' %}' alt='Meow'> </img>
+                        {% else %}
+                            <img src='{% static 'img/student_woman.png' %}' alt='Meow'> </img>
+                        {% endif %}                                        
+                    {% endif %}
+                    </div>
+                    <div class="col-auto ms-3">
+                        <h4 class="user__name">{{post.user}}</h4>
+                        <p class="user__time">{{post.created_at}}</p>
+                    </div>
+
+                    {% comment %} button Chỉnh sửa xóa xong {% endcomment %}
+                    <div class="col text-center">
+                        <div class="d-flex justify-content-end">
+                            {% if is_owner %}
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    <input hidden name="delete" value="True">
+                                    <button class="highlight-button mt-2" type="submit">Xoá</button>
+                                </form>
+                                <button class="highlight-button mt-2 ms-3" id="edit" type="button">Chỉnh sửa</button>
+                                <button class="highlight-button mt-2 ms-3" id="verify" type="button">Xong</button>
+                            {% endif %}
+                        </div>   
+                    </div>
+                    
+                </div>
+
+   
+                
+
+                <div class="row-auto">
+                    <form method="post" id="editpost">
+                        {% csrf_token %}
+                        <input hidden name="edit" value="True">
+                        {% render_field form.title|append_attr:"disabled" id="title-input" type="text" class="form-control bg-white border-0 font-weight-bold fs-3 mb-3" %}
+                        {% render_field form.content|append_attr:"disabled" id="content-input" type="text" class="noidung form-control bg-white border-0 text-justify" %}
+                    </form>
+                </div>
+                
+                
+                
+                
+            </div>
+        </div>
+
+
+        {% comment %} Bình luận  {% endcomment %}
+                {% if user.is_authenticated %}
+                    <div class="w-100 py-4 justify-content-center rounded-4-4">
+                        <div class="row border rounded-4 p-4">
+                            <div class="col-12">
+                                <form action="" method="post" id="myForm">
+                                    {% csrf_token %}
+                                    <div class="row mb-3">
+                                        <div class="col-9 d-flex align-items-center">
+                                            <h4 class="mb-0">Bình luận</h4>
+                                        </div>
+                                        <div class="col-3 d-flex justify-content-end">
+                                            <button type="submit" class="highlight-button">Gửi</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 ">
+                                            <textarea name="content" class="form-control noidung" rows="3" placeholder="Viết bình luận tại đây..." maxlength="150"></textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    {% comment %} <p>Người dùng chưa đăng nhập!</p> {% endcomment %}
+                {% endif %}
+
+                
+
+
+                {% comment %} List bình luận {% endcomment %}
+
+
+
+
+                <div class="w-100 py-4 justify-content-center">
+                    <div class="row border rounded-4 p-4">
+                    {% if replies %}
+                    {% for reply in replies %}
+                      <div class="comment-item">
+                        <div class='user'>
+                            {% if not is_student %}
+                                {% if reply.user.gender == 0 %}
+                                    <img src='{% static 'img/teacher_man.png' %}' alt='Meow'> </img>
+                                {% else %}
+                                    <img src='{% static 'img/teacher_woman.png' %}' alt='Meow'> </img>
+                                {% endif %}
+                            {% else %}
+                                {% if reply.user.gender == 0 %}
+                                    <img src='{% static 'img/student_man.png' %}' alt='Meow'> </img>
+                                {% else %}
+                                    <img src='{% static 'img/student_woman.png' %}' alt='Meow'> </img>
+                                {% endif %}                                        
+                            {% endif %}
+                        </div>
+                          <div class="comment__desc">
+                              <h4 class="user__name">{{reply.user}}</h4>
+                              <p class="user__time">{{post.created_at}}</p>
+                              <p class="comment-text">{{reply.content}}</p>
+                          </div>
+                      </div>
+                      {% endfor %}
+                      {%else%}
+                      <p class="alert alert-info rounded-4">Chưa có bình luận</p>
+                      {% endif %}
+                  </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+            <div>
+                
+            </div>
+        </div>
+
+
+
+        <div class="col-md-3"></div> <!-- Đây là cột trống bên phải, chiếm 3/12 phần -->
+    </div>
+</div>
+
+
+
+
+
+<script>
+    $(document).ready(function(){
+        // Ẩn nút verify khi trang được tải
+        $("#verify").hide();
+        
+        // Sự kiện click cho nút edit
+        $("#edit").click(function(){
+            // Ẩn nút edit
+            $(this).hide(); 
+            
+            // Hiện nút verify
+            $("#verify").show(); 
+            
+            // Loại bỏ thuộc tính disabled và thêm border cho các input
+            $("#title-input, #content-input").prop('disabled', false).css("border", "1px solid #000");
+        });
+
+        $("#verify").click(function(){
+            // Submit form có id là "editpost"
+            $("#editpost").submit();
+        });
+
+        // Sự kiện click cho nút xóa reply
+    });
+</script>
+
+
+
+{% endblock %}

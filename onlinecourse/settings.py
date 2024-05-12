@@ -30,7 +30,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = "django-insecure-jr$*c0mu(pw1r@5@v-#-#(ko)q)#nt7g^$de4fh@96on$i0z-*"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL= 'base.User'
@@ -39,6 +39,8 @@ AUTH_USER_MODEL= 'base.User'
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -52,6 +54,9 @@ INSTALLED_APPS = [
     'teacher',
     'widget_tweaks',
 ]
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',

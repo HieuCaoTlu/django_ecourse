@@ -29,6 +29,8 @@ class Teacher(User):
     )
     level = models.IntegerField(choices=CHOICE, default=0)
     earning = models.IntegerField(default=0, blank=True)
+    bank = models.CharField(default='',max_length=50,blank=False)
+    bank_number = models.CharField(default='',max_length=50,blank=False)
     class Meta:
         verbose_name = 'Giảng viên'
         verbose_name_plural = 'Giảng viên'

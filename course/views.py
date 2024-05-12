@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.db.models import OuterRef, Exists, Value
 from payment.models import PaymentInfo
 from .certificate import make_certificates
-
+from django.contrib import messages
 class HomepageCourse(View):
 
     def get(self, request):
@@ -154,6 +154,9 @@ class DetailCourse(View):
                     info = PaymentInfo.objects.get(pk=request.session.get('info_id', None))
                     info.enrollment = enrollment
                     info.save()
+                    teacher = Teacher.objects.get(pk=course.teacher)
+                    teacher.earning += ((course.price / 100) * 50)
+                    teacher.save()
                     del request.session['info_id']
                     lessons = Lesson.objects.filter(section__course=course)
                     for each in lessons:
@@ -163,6 +166,7 @@ class DetailCourse(View):
             except Student.DoesNotExist:
                 return HttpResponse("<script>alert('Bạn chưa đăng kí tài khoản học sinh');history.back()</script>")
         else:
+            messages.error(request, 'Vui lòng đăng nhập để sử dụng chức năng này')
             return redirect('base:login')
    
 class DetailLesson(View):

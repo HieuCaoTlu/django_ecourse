@@ -1,11 +1,15 @@
 from django.shortcuts import redirect, render
 from django.views import View
 from base.models import *
+from .models import InvoiceRequest
 from django.db.models import Count, Avg, Case, When
 from onlinecourse import settings
 from .forms import CourseForm, SectionFormSet, SectionForm, LessonFormSet, DescriptionFormSet
 from django.views.generic.edit import CreateView, UpdateView
-
+from django.contrib import messages
+from django.http import HttpResponse
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 class HomepageTeacher(View):
 
     def get(self, request):
@@ -29,13 +33,15 @@ class HomepageTeacher(View):
                 'logged': request.user.is_authenticated,
                 'teacher' : teacher,
                 'update_length': all_courses.count(),
-                'valid_length': Course.objects.filter(teacher=teacher, validate=False).count(),
+                'valid_length': Course.objects.filter(teacher=teacher, validate=True, active=False).count(),
                 'active_length': Course.objects.filter(teacher=teacher, active=True).count()
                 }
                 return render(request, template_name='teacher/homepage.html', context=content)
             else:
+                messages.error(request, 'Vui lòng đăng nhập tài khoản giảng viên')
                 return redirect('base:login')
         else:
+            messages.error(request, 'Vui lòng đăng nhập tài khoản giảng viên')
             return redirect('base:login')
         
     def post(self, request):
@@ -177,3 +183,69 @@ class SectionUpdate(SectionInline, UpdateView):
         return {
             'lessons': LessonFormSet(self.request.POST or None, self.request.FILES or None, instance=self.object, prefix='lessons'),
         }
+
+class IncomeTeacher(View):
+    def get(self, request):
+        teacher = None
+        if request.user.is_authenticated:
+            teacher = Teacher.objects.filter(pk=request.user.id).first()
+            if teacher:
+                enrolled = Enrollment.objects.filter(course__teacher=teacher)
+                courses = Course.objects.filter(teacher=teacher)
+                course_enrollments = []
+                for course in courses:
+                    enrollments = Enrollment.objects.filter(course=course)
+                    total_enrollments = enrollments.count()
+                    course_enrollments.append({
+                        'course': course,
+                        'total_enrollments': total_enrollments,
+                        'percentage': total_enrollments / len(enrolled) * 100 if len(enrolled) > 0 else 0
+                    })
+                enrolled_by_date = {}
+                for enrollment in enrolled:
+                    date_key = enrollment.enroll_date.strftime('%Y-%m-%d')
+                    enrolled_by_date[date_key] = enrolled_by_date.get(date_key, 0) + 1
+                invoices = InvoiceRequest.objects.filter(teacher=teacher)
+                invoices_data = [
+                    {'amount': invoice.amount, 
+                     'date': invoice.date.strftime("%Y-%m-%d %H:%M:%S"), 
+                     'status': 'Đã thanh toán' if invoice.status else 'Đang xử lý'
+                    } for invoice in invoices]
+                invoices_json = json.dumps(invoices_data, cls=DjangoJSONEncoder)
+                valid = request.session.pop('valid', None)
+                print(invoices)
+                content = {
+                'enrolled': enrolled,
+                'logged': request.user.is_authenticated,
+                'teacher' : teacher,
+                'enrolled_by_date': enrolled_by_date,
+                'course_enrollments': course_enrollments,
+                'invoices_json': invoices_json,
+                'valid': valid
+                }
+
+                return render(request, template_name='teacher/income.html', context=content)
+            else:
+                messages.error(request, 'Vui lòng đăng nhập tài khoản giảng viên')
+                return redirect('base:login')
+        else:
+            messages.error(request, 'Vui lòng đăng nhập tài khoản giảng viên')
+            return redirect('base:login')
+        
+    def post(self, request):
+        if request.user.is_authenticated and request.user.teacher:
+            teacher = Teacher.objects.filter(pk=request.user.id).first()
+            if teacher.earning:
+                invoice = InvoiceRequest()
+                invoice.teacher = teacher
+                invoice.amount = teacher.earning
+                invoice.save()
+                teacher.earning = 0
+                teacher.save()
+                request.session['valid'] = True
+                return redirect('teacher:income')   
+            else:
+                messages.error(request, 'Ví của bạn trống!')
+                return redirect('teacher:income')
+        else:
+            return HttpResponse("<script>alert('Giao dịch không hợp lệ!');history.back();</script>")

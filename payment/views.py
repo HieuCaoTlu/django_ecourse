@@ -5,7 +5,7 @@ from .forms import *
 from django.http import HttpResponse
 from base.models import Course, Student
 from .models import *
-
+from django.contrib import messages
 # Create your views here.
 class Payment(View):
 
@@ -14,6 +14,7 @@ class Payment(View):
         try:
             student = Student.objects.get(pk=request.user.id)
         except Student.DoesNotExist:
+            messages.error(request, 'Vui lòng đăng nhập tài khoản học viên')
             return redirect('base:login')
         return render(request, "payment/payment.html", {"title": "Thanh toán", "course":course, "student":student})
     

@@ -4,11 +4,18 @@
     background-color: #5E5DF0;
     color: #fff;
   }
+  .user-img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid #e0e0e0;
+  }
 </style>
 <section class="">
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" href="{% url 'course:homepage' %}">
         <img class="img-fluid" src="{% static 'logo.png' %}" alt="" style="width: 120px;">
       </a>
       <div class="collapse navbar-collapse position-absolute top-50 start-50 translate-middle">
@@ -20,43 +27,51 @@
         </ul>
       </div>
       {% if request.user.id %}
-          <div class="d-flex">
-              <div class="d-none d-lg-block"><a class="btn btn-outline-secondary rounded-4" href="{% url 'base:personal' %}">Thông tin</a></div>
-              <div class="d-none d-lg-block"><a class="btn btn-outline-secondary rounded-4 ms-2" href="{% url 'base:logout' %}">Đăng xuất</a></div>
-          </div>
+      <div class="d-flex align-items-center">
+
+        <div class="dropdown">
+            <a class="d-flex align-items-center text-decoration-none" href="#" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if user.teacher %}
+                    {% if user.gender == 0 %}
+                        <img class="user-img" src='{% static 'img/teacher_man.png' %}' alt='Meow'> </img>
+                    {% else %}
+                        <img class="user-img" src='{% static 'img/teacher_woman.png' %}' alt='Meow'> </img>
+                    {% endif %}
+                {% else %}
+                    {% if user.gender == 0 %}
+                        <img class="user-img" src='{% static 'img/student_man.png' %}' alt='Meow'> </img>
+                    {% else %}
+                        <img class="user-img" src='{% static 'img/student_woman.png' %}' alt='Meow'> </img>
+                    {% endif %}                                        
+                {% endif %}
+                <div class="ms-2 me-2">
+                    <div class="" style="color:#5E5DF0;font-weight: 600;margin-bottom: -5px;font-size:15px">{{ user.first_name }} {{ user.last_name }}</div>
+                    <small style="font-size: 13px;color: #3c3c3c;">
+                      {% if user.teacher %}
+                        Giảng viên
+                      {% else %}
+                        Học viên
+                      {% endif %}</small>
+                </div>
+            </a>
+    
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <li><a class="dropdown-item" href="{% url 'base:personal' %}">Thông tin cá nhân</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'base:logout' %}">Đăng xuất</a></li>
+            </ul>
+        </div>
+    </div>
+    
       {% else %}
-          <div class="d-none d-lg-block"><a class="btn btn-outline-secondary rounded-4" href="{% url 'base:login' %}">Đăng nhập</a></div>
+          <div class="d-none d-lg-block"><a class="btn btn-light rounded-4" href="{% url 'base:login' %}">Đăng nhập</a></div>
       {% endif %}
   </nav>
-  <div class="d-none navbar-menu position-fixed top-0 start-0 bottom-0 w-75 mw-xs" style="z-index: 9999;">
-    <div class="navbar-close navbar-backdrop position-fixed top-0 start-0 end-0 bottom-0 bg-dark" style="opacity: 75%;"></div>
-    <nav class="position-relative h-100 w-100 d-flex flex-column justify-content-between py-8 px-8 bg-white overflow-auto">
-      <div class="d-flex align-items-center">
-        <a class="me-auto h4 mb-0 text-decoration-none" href="#">
-          <img class="img-fluid" src="#" alt="">
-        </a>
-        <a class="navbar-close" href="#">
-          <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 18L18 6M6 6L18 18" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </a>
-      </div>
-      <div class="py-16">
-        <ul class="nav flex-column">
-          <li class="nav-item mb-8"><a class="nav-link text-dark" href="#">Features</a></li>
-          <li class="nav-item mb-8"><a class="nav-link text-dark" href="#">Solutions</a></li>
-          <li class="nav-item mb-8"><a class="nav-link text-dark" href="#">Resources</a></li>
-          <li class="nav-item"><a class="nav-link text-dark" href="#">Pricing</a></li>
-        </ul>
-      </div>
-      <div><a class="btn w-100 fw-medium" href="#">Login</a><a class="btn w-100 btn-primary" href="#">Sign in</a></div>
-    </nav>
-  </div>
 </section>
 <script>
   $(document).ready(function() {
     var currentUrl = window.location.href;
-    console.log(currentUrl);
+    console.log(currentUrl)
     
     $('.header-nav').removeClass('active');
     
@@ -65,6 +80,9 @@
     }
     else if (currentUrl.indexOf('forum') !== -1) {
       $('#header_forum').addClass('active');
+    }
+    else if (currentUrl.indexOf('base') !== -1) {
+      $('.header-nav').removeClass('active');
     } 
     // Nếu không, nếu không trong URL có các từ khóa 'forum' hoặc 'admin', đặt lớp 'active' cho liên kết có id là 'header_course'
     else if (currentUrl.indexOf('forum') === -1 && currentUrl.indexOf('admin') === -1) {

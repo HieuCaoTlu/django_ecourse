@@ -24,8 +24,9 @@
         border: 1px solid #dfdfdf;
         border-radius: 20px;
         flex-grow: 1;
-        max-width: 335px;
-        margin-right: 20px;
+        max-width: 305px;
+        margin-left: 10px;
+        margin-right: 10px;
         margin-bottom: 20px; /* Giới hạn chiều rộng tối đa của mỗi card */
     }
 
@@ -45,77 +46,171 @@
         border: 0;
         margin-top: auto; /* Đảm bảo rằng phần chân của card luôn nằm dưới cùng */
     }
+    .search-tab {
+    flex: 1; /* Chiếm hết không gian còn lại */
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px; /* Đẩy tìm kiếm về phía bên phải */
+    }
+    .focus-none:focus {
+    outline: none;
+    box-shadow: none;
+}
 </style>
-<div class="">
-    <h1 class="mt-4 fs-1 mb-0 heading">Cẩm Nang Lập Trình</h1>
-    <p class="mt-2 fs-6 subheading" style="color: black">Lập trình cho người mới bắt đầu</p>
-</div>
-
-<div class="ms-5 me-4">
-    <h5>Các khóa học hiện có</h5>
-    <div class="mt-4 course-container">
-        {% if message == 'FOUND' %}
-        {% for course in all_courses %}
-        <div class="card rounded-5" style="border-radius: 20px;">
-            <a href="course/{{ course.id }}" style="display: flex;">
-                <img src="{{ course.cover }}" class="card-img-top rounded-5 rounded-bottom-0" alt="{{ course.title }}">
-            </a>
-            <div class="card-body ms-1 me-1">
-                <h5 class="card-title fs-5">{{ course.title }}</h5>
-                <p class="card-text fs-11">
-                    {% if course.teacher.level == 0 %}
-                    Giảng viên:
-                    {% elif course.teacher.level == 1 %}
-                    Thạc sĩ:
-                    {% else %}
-                    Tiến sĩ:
-                    {% endif %}
-                    {{ course.teacher }}
-                </p>
-            </div>
-            <div class="card-footer d-flex justify-content-between align-items-center border-0 mb-2">
-                {% if course.user_enroll %}
-                    <a href="course/{{ course.id }}" class="small-button">Đã tham gia</a>
-                {% else %}
-                    <a href="course/{{ course.id }}" class="blue-button">Tham gia</a>
-                {% endif %}
-                <div class="me-2" style="color: #3e3e78">
-                    <span class="enroll-count fs-6 ms-1 me-2">
-                        {{ course.enroll }}
-                        <i class="fas fa-user"></i>
-                    </span>
-                    <span class="enroll-count fs-6 ms-1">
-                        {% if not course.vote %}
-                        Chưa có
-                        {% else %}
-                        {{ course.vote }}/5.0
-                        {% endif %}
-                        <i class="fas fa-star"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+<div class="container">
+    <div class="">
+        <h1 class="mt-4 fs-1 mb-0 heading">Cẩm Nang Lập Trình</h1>
+        <p class="mt-2 fs-6 subheading" style="color: black">Lập trình cho người mới bắt đầu</p>
+    </div>
+    <ul class="nav nav-tabs mt-4 mb-2">
+        <li class="nav-item">
+            <a id="courses-tab" class="nav-link active" aria-current="page" href="#"
+                style="font-weight: 600;color: #5E5DF0;">Khóa học hiện có</a>
+        </li>
+        <li class="nav-item">
+            <a id="categories-tab" class="nav-link" href="" style="color: black;">Nhóm khóa học</a>
+        </li>
+        {% if user %}
+            <li class="nav-item">
+                <a id="my-tab" class="nav-link" href="" style="color: black;">Khóa học của tôi</a>
+            </li>         
         {% endif %}
-    </div>
-    <h5 class="mt-5">Nhóm khóa học</h5>
-    <div class="mt-4 course-container">
-        {% for category in all_categories %}
-        <a href="{% url 'course:category' category.id %}">
-            <div class="position-relative me-4" style="width: 335px; height: 150px;">
-                <img src="{{category.cover}}" class="rounded-5" style="width: 100%; height: 100%;" alt="...">
-                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-dark bg-opacity-50 text-center text-light rounded-5">
-                    <div class="fs-2" style="font-weight: 700;">
-                        {{category.title}}
-                    </div>
-                    <div class="fs-5">
-                        {{category.level}}
+        <li class="search-tab"> <!-- Thêm class search-tab vào li để xác định vị trí của tìm kiếm -->
+            <input type="text" class="border-0 mr-2 focus-none" placeholder="Tìm kiếm" aria-label="Tìm kiếm" aria-describedby="button-addon2">
+            <button class="" type="button" id="button-addon2" style="background-color: transparent;border: none;width: 3rem;">
+            <i class="fas fa-search"></i>
+            </button>
+        </li>
+    </ul>
+    <div class="">
+        <div class="mt-4 course-container" id="courses-content">
+            {% if message == 'FOUND' %}
+            {% for course in all_courses %}
+            <div class="card rounded-5" {% if course.user_enroll %}name="enrolled"{% endif %} style="border-radius: 20px;">
+                <a href="course/{{ course.id }}" style="display: flex;">
+                    <img src="{{ course.cover }}" class="card-img-top rounded-5 rounded-bottom-0" alt="{{ course.title }}">
+                </a>
+                <div class="card-body ms-1 me-1">
+                    <h5 class="card-title fs-5">{{ course.title }}</h5>
+                    <p class="card-text fs-11">
+                        {% if course.teacher.level == 0 %}
+                        Giảng viên:
+                        {% elif course.teacher.level == 1 %}
+                        Thạc sĩ:
+                        {% else %}
+                        Tiến sĩ:
+                        {% endif %}
+                        {{ course.teacher }}
+                    </p>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center border-0 mb-2">
+                    {% if course.user_enroll %}
+                        <a href="course/{{ course.id }}" class="small-button">Đã tham gia</a>
+                    {% else %}
+                        <a href="course/{{ course.id }}" class="blue-button">Tham gia</a>
+                    {% endif %}
+                    <div class="me-2" style="color: #3e3e78">
+                        <span class="enroll-count fs-6 ms-1 me-2">
+                            {{ course.enroll }}
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <span class="enroll-count fs-6 ms-1">
+                            {% if not course.vote %}
+                            Mới
+                            {% else %}
+                            {{ course.vote }}
+                            {% endif %}
+                            <i class="fas fa-star"></i>
+                        </span>
                     </div>
                 </div>
             </div>
-        </a>
-        {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mt-4 course-container" id="categories-content" style="display: none;">
+            {% for category in all_categories %}
+            <a href="{% url 'course:category' category.id %}">
+                <div class="position-relative me-4" style="width: 335px; height: 150px;">
+                    <img src="{{category.cover}}" class="rounded-5" style="width: 100%; height: 100%;" alt="...">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-dark bg-opacity-50 text-center text-light rounded-5">
+                        <div class="fs-2" style="font-weight: 700;">
+                            {{category.title}}
+                        </div>
+                        <div class="fs-5">
+                            {{category.level}}
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        // Ẩn phần "Nhóm khóa học" mặc định khi trang được tải
+        $("#categories-content").hide();
+
+        $("#courses-tab").click(function(event) {
+            event.preventDefault();
+            $(this).addClass("active");
+            $("#categories-tab").removeClass("active");
+            $("#categories-content").hide();
+            $("#courses-content").show();
+            $("#my-tab").removeClass("active");
+            $(this).addClass("active").css({"font-weight": "600", "color": "#5E5DF0"});
+            $("#categories-tab").removeClass("active").css({"font-weight": "", "color": "black"});
+            $("#my-tab").removeClass("active").css({"font-weight": "", "color": "black"});
+            $("#courses-content").children().show();
+        });
+
+        $("#categories-tab").click(function(event) {
+            event.preventDefault();
+            $(this).addClass("active");
+            $("#courses-tab").removeClass("active");
+            $("#courses-content").hide();
+            $("#categories-content").show();
+            $("#my-tab").removeClass("active");
+            $(this).addClass("active").css({"font-weight": "600", "color": "#5E5DF0"});
+            $("#courses-tab").removeClass("active").css({"font-weight": "", "color": "black"});
+            $("#my-tab").removeClass("active").css({"font-weight": "", "color": "black"});
+        });
+
+        $("#my-tab").click(function(event) {
+            event.preventDefault();
+            $(this).addClass("active");
+            $("#categories-tab").removeClass("active");
+            $("#courses-tab").removeClass("active");
+            $("#categories-content").hide();
+            $("#courses-content").show();
+            $("#courses-content").children().each(function() {
+                if ($(this).attr("name") === "enrolled") {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+            $(this).addClass("active").css({"font-weight": "600", "color": "#5E5DF0"});
+            $("#courses-tab").removeClass("active").css({"font-weight": "", "color": "black"});
+            $("#categories-tab").removeClass("active").css({"font-weight": "", "color": "black"});
+        });
+
+        $(".search-tab input").on("keyup", function() {
+        var searchText = $(this).val().toLowerCase(); 
+        $(".card").each(function() {
+            var courseTitle = $(this).find(".card-title").text().toLowerCase();
+            if (courseTitle.indexOf(searchText) === -1) { 
+                $(this).hide(); // Ẩn khóa học
+            } else {
+                $(this).show(); // Hiển thị khóa học
+            }
+        });
+    });
+    });
+
+</script>
+
+
 
 {% endblock %}

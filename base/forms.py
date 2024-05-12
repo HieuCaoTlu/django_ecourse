@@ -34,12 +34,12 @@ class TeacherCreationForm(UserCreationForm):
 
     class Meta:
         model = Teacher
-        fields = UserCreationForm.Meta.fields + ('level','username','email')
+        fields = UserCreationForm.Meta.fields + ('level','username','email','bank','bank_number')
 
 class TeacherChangeForm(UserChangeForm):
     class Meta:
         model = Teacher
-        fields = UserChangeForm.Meta.fields + ('level','email')
+        fields = UserChangeForm.Meta.fields + ('level','email','bank','bank_number')
 
 class StudentCreationForm(UserCreationForm):
     def save(self, commit=True):

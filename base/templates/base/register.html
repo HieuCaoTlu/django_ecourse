@@ -53,6 +53,10 @@
                 {% render_field form.phone class="form-control mb-3" placeholder="Điện thoại" type="text" %}
                 {% render_field form.username class="form-control mb-3" placeholder="Tên đăng nhập" type="text" %}
                 {% render_field form.password1 class="form-control mb-3" placeholder="Mật khẩu" type="password" %}
+                {% if form.bank %}
+                    {% render_field form.bank class="form-control mb-3" placeholder="Nhập tên ngân hàng" type="text" %}
+                    {% render_field form.bank_number class="form-control mb-3" placeholder="Nhập số tài khoản ngân hàng" type="text" %}
+                {% endif %}
                 <small class="form-text text-muted">
                     <ul>
                         <li>Mật khẩu phải chứa tối thiểu 8 kí tự</li>

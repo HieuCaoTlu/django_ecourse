@@ -1,4 +1,4 @@
-{% extends "payment/base.html" %}
+{% extends "teacher/base.html" %}
 {% block content %}
 <style>
     .heading {
@@ -46,7 +46,7 @@
                 style="font-weight: 600;color: #5E5DF0;">Danh sách khóa học</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#" style="color: black;">Thu nhập</a>
+            <a class="nav-link" href="{% url 'teacher:income' %}" style="color: black;">Thu nhập</a>
         </li>
     </ul>
     <div class="mt-3 ms-2 me-2">

@@ -10,20 +10,14 @@ from base.models import Student, Teacher
 class Login(View):
 
     def get(self, request):
-        content = {
-            'message':'LOGIN',   
-        }
-        return render(request,template_name='base/login.html',context=content)
+        return render(request,'base/login.html')
     
     def post(self, request):
         username = request.POST.get('username')
         psw = request.POST.get('psw')
         user = authenticate(username=username, password=psw)
         if not user:
-            content = {
-                'message':'FAIL',   
-            }
-            return render(request,template_name='base/login.html',context=content)
+            return render(request,'base/login.html',{'message':'FAIL',})
         login(request, user)
         if hasattr(user, 'teacher'):
             return redirect('teacher:homepage')
@@ -56,7 +50,7 @@ class Register(View):
             form = TeacherCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('course:homepage')
+            return render(request,'base/login.html',{'valid':'REGISTER_SUCCESS'})
         if role_type == 'student':
             form = StudentCreationForm()
         else:

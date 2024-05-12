@@ -5,8 +5,19 @@
     <h2 class="text-center mt-4" style="font-weight: 500">Đăng nhập</h2>
     <div class="row justify-content-center">
         <div class="col-md-10 mt-4">
-            {% if message and message == 'FAIL' %}
-                <div class="alert alert-danger justify-content-center align-items-center" role="alert"> Thông tin đăng nhập không chính xác </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger justify-content-center align-items-center" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if valid %}
+            <div class="alert alert-success justify-content-center align-items-center" role="alert">  
+                    {% if valid == 'REGISTER_SUCCESS' %}
+                        Đăng kí thành công!
+                    {% endif %}
+                </div>
             {% endif %}
             <form method="post">
                 {% csrf_token %}

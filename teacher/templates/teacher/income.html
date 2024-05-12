@@ -1,0 +1,266 @@
+{% extends "teacher/base.html" %}
+{% block content %}
+<style>
+    .heading {
+        font-weight: bold;
+        color: #4f4fff;
+        text-align: center;
+        touch-action: manipulation;
+    }
+
+    .subheading {
+        font-weight: 500;
+        text-align: center;
+    }
+    .section-card {
+        border: 1px solid #dfdfdf;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .validate-button {
+        background: #77ffc4;
+        border-radius: 999px;
+        box-sizing: border-box;
+        color: #000000;
+        font-size: 13px;
+        opacity: 1;
+        outline: 0 solid transparent;
+        padding: 6px 14px;
+        user-select: none;
+        -webkit-user-select: none;
+        width: fit-content;
+        word-break: break-word;
+        border: 0;
+        text-decoration: none;
+    }
+</style>
+<div class="">
+    <h1 class="mt-4 fs-1 mb-0 heading">Trang Chủ Giảng Viên</h1>
+    <p class="mt-2 fs-6 subheading" style="color: black">{{ teacher.first_name }} {{ teacher.last_name }}</p>
+</div>
+<div class="container">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'teacher:homepage' %}" style="color: black;">Danh sách khóa học</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#"
+                style="font-weight: 600;color: #5E5DF0;">Thu nhập</a>
+        </li>
+    </ul>
+    <small id="data-chart" hidden>{{ enrolled_by_date }}</small>
+    <small id="data-chart-2" hidden>{{ course_enrollments }}</small>
+    <div class="d-flex mt-4 mb-5 rounded-4">
+        <canvas id="bar-chart" width="800px" height="300px"></canvas>
+        <canvas id="pie-chart" width="500px" height="280px"></canvas>
+    </div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger justify-content-center align-items-center" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if valid %}
+        <div class="alert alert-success justify-content-center align-items-center" role="alert">  
+            Yêu cầu thanh toán thành công!
+        </div>
+    {% endif %}
+    <div class=" w-100 d-flex rounded-4" style="font-weight: 400;border: 1px solid #ccc;padding: 20px 30px">
+        <div class="fs-3 col">
+            Ví của bạn: <span id="formattedPrice"></span>
+            <p style="margin: 0;font-size: 12px;">{{ teacher.bank }} - {{ teacher.bank_number }}</p>
+        </div>
+        <div class="col-auto d-flex justify-content-center align-items-center text-center">
+            <form action="" method="post">
+                {% csrf_token %}
+                <button class="blue-button" type="submit">Yêu cầu thanh toán</button>
+            </form>
+        </div>
+    </div>
+    <div class=" w-100 mt-3 rounded-4" style="font-weight: 400;border: 1px solid #ccc;padding: 20px 30px">
+        <div class="fs-3 mt-3 mb-2" style="font-weight: 600;">Danh sách hóa đơn </div>
+        <table class="table mt-3" style="border: 1px #e3e3e3 solid; border-radius: 20px;">
+            <thead class="">
+                <tr>
+                    <th scope="col">Số tiền</th>
+                    <th scope="col">Ngày yêu cầu</th>
+                    <th scope="col">Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody id="invoices-table-body">
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Lấy dữ liệu từ thẻ small
+    var dataChart = document.getElementById("data-chart").textContent;
+
+    // Loại bỏ các ký tự không cần thiết từ chuỗi dữ liệu
+    dataChart = dataChart.replace("{", "");
+    dataChart = dataChart.replace("}", "");
+    dataChart = dataChart.split(", ");
+
+    // Khởi tạo mảng cho ngày và số lượng đăng ký
+    var dates = [];
+    var enrollments = [];
+
+    // Lặp qua từng cặp ngày và số lượng đăng ký
+    dataChart.forEach(function(pair) {
+        var parts = pair.split(": ");
+        dates.push(parts[0].replace(/'/g, ""));
+        enrollments.push(parseInt(parts[1]));
+    });
+
+    // Chỉ lấy dữ liệu trong 7 ngày của tuần hiện tại
+    var currentDate = new Date();
+    var endDate = new Date();
+    var startDate = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay())); // Ngày đầu tiên của tuần hiện tại
+    for (var i = 0; i < 7; i++) {
+        var date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+        var formattedDate = date.toISOString().split('T')[0];
+        if (dates.includes(formattedDate)) {
+            var index = dates.indexOf(formattedDate);
+            dates.splice(index + 1, dates.length - index);
+            enrollments.splice(index + 1, enrollments.length - index);
+        } else {
+            dates.splice(i, 0, formattedDate);
+            enrollments.splice(i, 0, 0);
+        }
+    }
+
+    // Vẽ biểu đồ bar bằng dữ liệu thu được
+    var ctxBar = document.getElementById('bar-chart').getContext('2d');
+    var barChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Số lượng đăng ký',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                data: enrollments
+            }]
+        },
+        options: {
+            responsive: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                    }
+                }
+            },
+            plugins: {
+            title: {
+                display: true,
+                text: 'Thu nhập trong tuần này',
+                font: {
+                    size: 24,
+                }
+            }
+        }
+        }
+    });
+
+    var dataChart2 = document.getElementById("data-chart-2").textContent;
+    var regex = /<Course:\s(.*?)>,\s'total_enrollments':\s(\d+),\s'percentage':\s(\d+\.?\d*)/g;
+    var match;
+    var courses = [];
+    while ((match = regex.exec(dataChart2)) !== null) {
+        var courseName = match[1];
+        var totalEnrollments = parseInt(match[2]);
+        var percentage = parseFloat(match[3]);
+        courses.push({
+            courseName: courseName,
+            totalEnrollments: totalEnrollments,
+            percentage: percentage
+        });
+    }
+
+    var sortedCourses = courses.sort(function(a, b) {
+        return b.totalEnrollments - a.totalEnrollments;
+    });
+
+    var top5 = sortedCourses.slice(0, 5);
+    var othersTotal = sortedCourses.slice(5).reduce(function(acc, cur) {
+        return acc + cur.totalEnrollments;
+    }, 0);
+
+    var pieLabels = top5.map(function(item) {
+        return item.courseName;
+    });
+    pieLabels.push("Others");
+    var pieEnrollments = top5.map(function(item) {
+        return item.totalEnrollments;
+    });
+    pieEnrollments.push(othersTotal);
+
+    var ctxPie = document.getElementById('pie-chart').getContext('2d');
+    var pieChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+            labels: pieLabels,
+            datasets: [{
+                data: pieEnrollments,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: false, // Tắt chế độ phản hồi tự động
+            maintainAspectRatio: false,
+            plugins: {
+            title: {
+                display: true,
+                text: 'Top các khóa học của bạn',
+                font: {
+                    size: 24,
+                }
+            }
+        }
+        }
+        
+    });
+    function formatNumber(number) {
+    // Chuyển số thành chuỗi và loại bỏ phần thập phân nếu có
+    var strNumber = number.toString().split('.')[0];
+    // Thêm dấu chấm ngăn cách mỗi 3 chữ số
+    return strNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+    var price = "{{ teacher.earning }}";
+    var formattedPrice = formatNumber(price);
+    $('#formattedPrice').text(formattedPrice + ' VND');
+    var invoicesData = JSON.parse('{{ invoices_json|escapejs }}');
+        
+        // Sử dụng jQuery để thêm các hàng vào bảng
+        $(document).ready(function() {
+            $.each(invoicesData, function(index, invoice) {
+                var row = '<tr><td>' + formatNumber(invoice.amount) + ' VND </td><td>' + invoice.date +'</td><td>' + invoice.status + '</td></tr>';
+                $('#invoices-table-body').append(row);
+            });
+        });
+});
+</script>
+
+    
+{% endblock %}

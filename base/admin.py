@@ -128,7 +128,7 @@ class TeacherAdmin(UserAdmin):
     search_fields = ('last_name','first_name')
     fieldsets = (
         ('Thông tin cá nhân', {
-            'fields': ('username', 'password', 'email', 'phone','first_name', 'last_name','earning','level'),
+            'fields': ('username', 'password', 'email', 'phone','first_name', 'last_name','earning','level','bank','bank_number'),
         }),
         ('Trạng thái', {
             'fields': ('is_staff', 'is_active',),
@@ -136,7 +136,7 @@ class TeacherAdmin(UserAdmin):
     )
     add_fieldsets = (
         ('Thông tin cá nhân', {
-            'fields': ('username', 'email', 'password1', 'password2', 'first_name', 'last_name','level'),
+            'fields': ('username', 'email', 'password1', 'password2', 'first_name', 'last_name','level','bank','bank_number'),
         }),
     )
     list_display = ('full_name', 'phone', 'email', 'is_staff',  'is_active')
@@ -149,7 +149,7 @@ class TeacherAdmin(UserAdmin):
         else:
             return (
                 ('Thông tin cá nhân', {
-                    'fields': ('username', 'password', 'email', 'phone', 'first_name', 'last_name', 'level'),
+                    'fields': ('username', 'password', 'email', 'phone', 'first_name', 'last_name', 'level','bank','bank_number'),
                 }),
                 ('Trạng thái', {
                     'fields': ('is_active',),

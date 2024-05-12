@@ -7,4 +7,5 @@ urlpatterns = [
     path('create/', CourseCreate.as_view(), name='create_course'),
     path('update/<int:pk>/', CourseUpdate.as_view(), name='update_course'),
     path('update/lesson/<int:pk>/', SectionUpdate.as_view(), name='update_section'),
+    path('income/', IncomeTeacher.as_view(), name='income'),
 ]

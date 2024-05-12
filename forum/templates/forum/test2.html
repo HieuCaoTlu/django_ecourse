@@ -1,0 +1,104 @@
+{% extends 'forum/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
+<link rel="stylesheet" href="{% static 'forum.css' %}">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-lg-6">
+            <div class="justify-content-center align-items-center ms-5 me-5">
+                <h3 class="title">Diễn đàn</h3>
+                {% if is_logged_in %}
+                <a href="{% url 'forum:makingpost'%}" class="blue-button mb-5" style="text-decoration:none; color: white;">Tạo bài đăng</a>
+                {% endif %}
+                <div class="container">
+                    <div class="content">
+                        <div class="list-posts">
+                            <ul>
+                                {% for post in posts %}
+                                <li style="margin-bottom: 20px;">
+                                    <a href="{% url 'forum:post' post.id %}" style="text-decoration:none">
+                                        <div class="blog w-100">
+                                            <div class="user">
+                                                {% if not post.is_student %}
+                                                    {% if post.gender == 0 %}
+                                                        <img src='{% static 'img/teacher_man.png' %}' alt='Meow'> </img>
+                                                    {% else %}
+                                                        <img src='{% static 'img/teacher_woman.png' %}' alt='Meow'> </img>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if post.gender == 0 %}
+                                                        <img src='{% static 'img/student_man.png' %}' alt='Meow'> </img>
+                                                    {% else %}
+                                                        <img src='{% static 'img/student_woman.png' %}' alt='Meow'> </img>
+                                                    {% endif %}                                        
+                                                {% endif %}
+                                                <div class="user__desc">
+                                                    <h4 class="user__name" style="margin-bottom:-10px;marign-top:20px">{{post.user}}</h4>
+                                                    <p class="user__time">{{post.created_at}}</p>
+                                                </div>
+                                            </div>
+                                            <h2 class="blog__title">
+                                                {{post.title}}
+                                            </h2>
+                                            <p class="blog__text">
+                                                {{post.content_hidden}}
+                                                <form action="{% url 'forum:like_post' %}" method="POST" class="ui mb-2">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                                    {% if user not in post.likes.all %}
+                                                        <button type="submit" class="highlight-button">
+                                                            <i class="fa-solid fa-thumbs-up"></i>
+                                                            Like
+                                                        </button>
+                                                    {% else %}
+                                                        <button type="submit-" class="highlight-button">
+                                                            <i class="fa-solid fa-thumbs-up"></i>
+                                                            Unlike
+                                                        </button>
+                                                    {% endif %}
+                                                </form>
+                                                <strong class="like__counter">{{ post.num_likes }} likes</strong>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {% if posts.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Back</a></li>
+                        {% endif %}
+                        {% if posts.number > 2 %}
+                            <li class="page-item"><a class="page-link" href="?page={{ posts.number|add:"-2" }}">{{ posts.number|add:"-2" }}</a></li>
+                        {% endif %}
+                        {% if posts.number > 1 %}
+                            <li class="page-item"><a class="page-link" href="?page={{ posts.number|add:"-1" }}">{{ posts.number|add:"-1" }}</a></li>
+                        {% endif %}
+                        <li class="page-item active"><a class="page-link" href="?page={{ posts.number }}">{{ posts.number }}</a></li>
+                        {% if posts.paginator.num_pages > posts.number %}
+                            <li class="page-item"><a class="page-link" href="?page={{ posts.number|add:"1" }}">{{ posts.number|add:"1" }}</a></li>
+                        {% endif %}
+                        {% if posts.paginator.num_pages > posts.number|add:"1" %}
+                            <li class="page-item"><a class="page-link" href="?page={{ posts.number|add:"2" }}">{{ posts.number|add:"2" }}</a></li>
+                        {% endif %}
+                        {% if posts.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ posts.paginator.num_pages }}">Last</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-3"></div> <!-- Empty right column -->
+    </div>
+</div>
+
+{% endblock %}

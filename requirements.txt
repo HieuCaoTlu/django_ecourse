@@ -9,6 +9,7 @@ Django==5.0.4
 django-admin-interface==0.28.6
 django-bower==5.2.0
 django-colorfield==0.11.0
+django-cors-headers==4.3.1
 django-environ==0.11.2
 django-memoize==2.3.1
 django-multiselectfield==0.1.12

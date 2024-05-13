@@ -9,7 +9,8 @@ class Post(Material):
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     @property
     def num_likes(self):
-        return self.likes.all().count()
+        return self.likes.count()
+        
     class Meta:
         verbose_name = 'Bài đăng'
         verbose_name_plural = 'Bài đăng'

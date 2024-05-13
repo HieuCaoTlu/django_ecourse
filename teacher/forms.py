@@ -8,7 +8,7 @@ from base.forms import LessonAdminForm, CourseDescForm
 class CourseForm(ModelForm):
     class Meta:
         model = Course
-        fields = ['title','image','category']
+        fields = ['title','category','image']
 
     def save(self, commit=True):
 

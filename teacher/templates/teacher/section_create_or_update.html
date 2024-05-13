@@ -1,27 +1,44 @@
 {% extends "teacher/base.html" %}
 {% block content %}
+{% load widget_tweaks %}
 <form enctype="multipart/form-data" class="container" method="post" id="section_form">
     {% csrf_token %}
     <div class="card">
         <div class="card-header card-header-secondary">
-            <h4 class="card-title">Add Section</h4>
+            <div class="d-flex align-items-center">
+                <a href="{% url 'teacher:update_course' course_id %}" class="small-button"><i class="fa-solid fa-arrow-left me-1"></i> Quay lại</a>
+                <h4 class="card-title mb-0 ms-3">Thông tin phần học</h4>
+            </div>
         </div>
-        {% for field in form %}
-        <div class="form-group card-body">
-            <label>{{field.label}}</label>
-            {% if field.field.required %}
-            <span style="color: red;" class="required">*</span>
-            {% endif %}
-
-            {{field}}
-            {% if field.help_text %}
-            <small style="color: grey">{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-            <p style="color: red">{{ error }}</p>
+        
+        <div class="row justify-content-between">
+            {% for field in form %}
+            <div class="col-auto d-flex justify-content-center text-center align-items-center ms-2 mt-2 mb-2">
+                {% if field.label == 'Title'%}
+                    <label class="fs-5">Tên phần học</label>
+                {% elif field.label == 'Active'%}
+                    <label class="fs-5">Trạng thái</label>
+                {% elif field.label == 'Course'%}
+                    <label class="fs-5">Thuộc khóa học</label>
+                {% endif %}
+                {% if field.field.required %}
+                <span style="color: red;" class="required me-3">*</span>
+                {% endif %}
+                {% if field.label == 'Active'%}
+                    {% render_field field class="ms-3" %}
+                {% else %}
+                    {% render_field field class="form-control" style="width:20rem;" %}
+                {% endif %}
+                {% if field.help_text %}
+                <small style="color: grey">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+                {% endfor %}
+            </div>
             {% endfor %}
         </div>
-        {% endfor %}
+
     </div>
     {% with named_formsets.lessons as formset %}
     {{ formset.management_form }}
@@ -39,13 +56,21 @@
             </script>
     <div class="table-responsive card mt-4">
         <div class="card-header card-header-secondary">
-            <h4 class="card-title">Add lessons</h4>
+            <div class="row">
+                <div class="col d-flex ustify-content-center align-items-center">
+                    <h4 class="card-title">Mục lục phần học</h4>
+                </div>
+                <div class="col-auto d-flex justify-content-center align-items-center">
+                    <div id="add-lesson-button" class="highlight-button add-lessons" style="cursor: pointer;">Thêm bài học</div>
+                </div>
+            </div>
         </div>
         <table class="table card-header">
-            <thead class="text-secondary">
-                <th>Tên bài học <span style="color: red;" class="required">*</span></th>
-                <th>Loại file</th>
-                <th>Tải file lên</th>
+            <thead class="fs-5" style="font-weight: 400;">
+                <th style="font-weight: 400;">Tên bài học <span style="color: red;" class="required">*</span></th>
+                <th style="font-weight: 400;">Loại tài liệu</th>
+                <th style="font-weight: 400;">Upload tài liệu</th>
+                <th style="font-weight: 400;">Xóa?</th>
             </thead>
             <tbody id="item-lessons"> 
                 {% for error in formset.non_form_errors %}
@@ -57,12 +82,15 @@
                     {{ formss.id }}
                     {% for field in formss.visible_fields %}
                     <td>
-                        {{field}}
+                        {% if field.label == 'Delete' %}
+                            {{ field }}
+                        {% else %}
+                            {% render_field field class="form-control" %}
+                        {% endif %}
                         {% for error in field.errors %}
                         <span style="color: red">{{ error }}</span>
                         {% endfor %}
 
-                        {% comment %} {{ field.DELETE }} {% endcomment %}
                     </td>
                     {% endfor %}
                     {% comment %} for delete {% endcomment %}
@@ -70,13 +98,12 @@
                 {% endfor %}
             </tbody>
         </table>
-        <a href="#" id="add-lesson-button" class="btn btn-secondary add-lessons">Add More</a>
     </div>
 
     {% endwith %}
 
     <div class="form-group">
-        <button type="submit" class="btn btn-secondary btn-block mt-2">Xác nhận</button>
+        <button type="submit" class="blue-button btn-block mt-3">Lưu lại</button>
     </div>
 </form>
 <script>
@@ -87,7 +114,7 @@
             var tmplMarkup = $('#lessons-template').html();
             var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
             $('#item-lessons').append(compiledTmpl);
-
+            $('#item-lessons').find('tr:last-child input[type!="checkbox"], tr:last-child select').addClass('form-control');
             // update form count
             $('#id_lessons-TOTAL_FORMS').attr('value', count + 1);
         });

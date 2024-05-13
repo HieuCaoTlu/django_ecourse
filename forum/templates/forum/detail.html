@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/course.css' %}"> 
-<link rel="stylesheet" href="{% static 'forum.css' %}">
+<link rel="stylesheet" href="{% static 'css/forum.css' %}">
 <style>
     .noidung {
         resize:none;
@@ -22,16 +22,16 @@
                 <div class="col d-flex ">
                     <div class="col-auto user img mr-4">
                         {% if not is_student %}
-                        {% if post.user.gender == 0 %}
-                            <img src='{% static 'img/teacher_man.png' %}' alt='Meow'> </img>
+                            {% if post.user.gender == 0 %}
+                                <img src='{% static 'img/teacher_man.png' %}' alt='Meow'> </img>
+                            {% else %}
+                                <img src='{% static 'img/teacher_woman.png' %}' alt='Meow'> </img>
+                            {% endif %}
                         {% else %}
-                            <img src='{% static 'img/teacher_woman.png' %}' alt='Meow'> </img>
-                        {% endif %}
-                    {% else %}
-                        {% if post.user.gender == 0 %}
-                            <img src='{% static 'img/student_man.png' %}' alt='Meow'> </img>
-                        {% else %}
-                            <img src='{% static 'img/student_woman.png' %}' alt='Meow'> </img>
+                            {% if post.user.gender == 0 %}
+                                <img src='{% static 'img/student_man.png' %}' alt='Meow'> </img>
+                            {% else %}
+                                <img src='{% static 'img/student_woman.png' %}' alt='Meow'> </img>
                         {% endif %}                                        
                     {% endif %}
                     </div>
@@ -67,6 +67,23 @@
                         {% render_field form.title|append_attr:"disabled" id="title-input" type="text" class="form-control bg-white border-0 font-weight-bold fs-3 mb-3" %}
                         {% render_field form.content|append_attr:"disabled" id="content-input" type="text" class="noidung form-control bg-white border-0 text-justify" %}
                     </form>
+                    {% if user.is_authenticated %}
+                    <form action="{% url 'forum:like_post' %}" method="POST" class="ui mb-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_id" value="{{ post.id }}">
+                        {% if user not in post.likes.all %}
+                            <button type="submit" class="highlight-button">
+                                Thích
+                            </button>
+                        {% else %}
+                            <button type="submit-" class="highlight-button">
+                                Đã thích
+                            </button>
+                        {% endif %}
+                        <button type="button" class="small-button ms-2" disabled>{{ post.num_likes }}<i class="fa-solid fa-heart ms-1"></i></button>
+                        <button type="button" class="small-button ms-2" disabled>{{ post.reply_count }}<i class="fa-solid fa-comment ms-1"></i></button>
+                        </form>
+                    {% endif %}
                 </div>
                 
                 
@@ -118,7 +135,7 @@
                     {% for reply in replies %}
                       <div class="comment-item">
                         <div class='user'>
-                            {% if not is_student %}
+                            {% if reply.user.teacher %}
                                 {% if reply.user.gender == 0 %}
                                     <img src='{% static 'img/teacher_man.png' %}' alt='Meow'> </img>
                                 {% else %}

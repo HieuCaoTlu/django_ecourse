@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from forum.models import Post, Reply, Like
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from base.models import Student, User
 from .form import PostForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -9,14 +9,20 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 class HomepageForum(View):
 
     def get(self, request):
-        all_posts = Post.objects.all()
+        # Lấy ra các bài đăng và sắp xếp theo thời gian tạo mới nhất
+        all_posts = Post.objects.order_by('-created_at')
+
+        # Thêm thuộc tính cho mỗi bài đăng
         for each in all_posts:
             each.is_student = hasattr(each.user,'student')
-            each.content_hidden = f'{each.content[:50]}..'
+            each.content_hidden = f'{each.content[:75]}..'
             each.gender = each.user.gender
-        paginator = Paginator(all_posts, 10)
+            each.reply_count = Reply.objects.filter(post=each).count()
 
+        # Phân trang
+        paginator = Paginator(all_posts, 5)
         page = request.GET.get('page')
+
         try:
             posts = paginator.page(page)
         except PageNotAnInteger:
@@ -24,6 +30,7 @@ class HomepageForum(View):
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
 
+        # Truyền dữ liệu cho template
         is_logged_in = request.user.is_authenticated
         context = {'posts': posts, 'is_logged_in': is_logged_in}
         return render(request, template_name='forum/homepage.html', context=context)
@@ -32,7 +39,8 @@ class DetailPost(View):
     def get(self, request, post_id):
         post = get_object_or_404(Post, pk=post_id)
         form = PostForm(instance=post)
-        replies = Reply.objects.filter(post=post)
+        replies = Reply.objects.filter(post=post).order_by('-created_at')
+        post.reply_count = replies.count()
         is_owner = request.user == post.user
         return render(request, 'forum/detail.html', {'post': post, 'replies': replies, 'form': form, 'is_owner': is_owner, 'is_student': hasattr(post.user, 'student')})
 
@@ -54,14 +62,14 @@ class DetailPost(View):
                 else:
                     pass
             else:
-                raise Http404("You are not authorized to edit this post.")
+                return redirect('forum:post',post_id=post.id)
         else:
             reply = Reply()
             reply.content = request.POST.get('content')
             reply.user = request.user
             reply.post = post
             reply.save()
-            return HttpResponse("<script>alert('Đã gửi bình luận');history.back()</script>")
+            return redirect('forum:post',post_id=post.id)
 
 def makingpost(request):
     if request.method == "POST":
@@ -89,6 +97,6 @@ def like_post(request):
             like.value = 'Unlike' if like.value == 'Like' else 'Like'
             like.save()
 
-        return redirect("forum:homepage")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         pass

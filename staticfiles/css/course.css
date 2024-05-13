@@ -9,13 +9,19 @@
   font-weight: 700;
   opacity: 1;
   outline: 0 solid transparent;
-  padding: 12px 24px;
+  padding: 12px 22px;
   user-select: none;
   -webkit-user-select: none;
   width: fit-content;
   word-break: break-word;
   border: 0;
   text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.blue-button:hover,
+.blue-button:hover * {
+  background: #303095; /* Màu nền nhạt hơn khi hover */
 }
 
 .grey-button {
@@ -28,7 +34,7 @@
   font-weight: 700;
   opacity: 1;
   outline: 0 solid transparent;
-  padding: 12px 24px;
+  padding: 12px 22px;
   user-select: none;
   -webkit-user-select: none;
   width: fit-content;

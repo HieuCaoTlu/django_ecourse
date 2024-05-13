@@ -84,7 +84,7 @@ class Course(Material):
     image = models.ImageField(upload_to='courses/', blank=True, null=True)
     price = models.IntegerField(default=0,blank=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE,blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,blank=True,null=True)
     active = models.BooleanField(default=False,blank=True)
     validate = models.BooleanField(default=False,blank=True)
 

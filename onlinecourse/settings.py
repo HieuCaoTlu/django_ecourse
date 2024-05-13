@@ -39,6 +39,7 @@ AUTH_USER_MODEL= 'base.User'
 # Application definition
 
 INSTALLED_APPS = [
+    "corsheaders",
     "admin_interface",
     "colorfield",
     "django.contrib.admin",
@@ -58,7 +59,14 @@ INSTALLED_APPS = [
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
+CORS_ALLOWED_ORIGINS = [
+    'http://*',
+    'https://*',
+]
+
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    'django.middleware.locale.LocaleMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -130,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 USE_I18N = True
 

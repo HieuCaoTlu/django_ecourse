@@ -177,6 +177,7 @@ class SectionUpdate(SectionInline, UpdateView):
     def get_context_data(self, **kwargs):
         ctx = super(SectionUpdate, self).get_context_data(**kwargs)
         ctx['named_formsets'] = self.get_named_formsets()
+        ctx['course_id'] = self.object.course.id
         return ctx
 
     def get_named_formsets(self):

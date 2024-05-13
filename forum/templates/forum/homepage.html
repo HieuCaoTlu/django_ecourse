@@ -23,7 +23,7 @@
 
 
 <link rel="stylesheet" href="{% static 'css/course.css' %}">
-<link rel="stylesheet" href="{% static 'forum.css' %}">
+<link rel="stylesheet" href="{% static 'css/forum.css' %}">
     <div class="w-100">
         <div class="w-100 justify-content-center align-items-center">
             <div class="col-md-8 mx-auto">
@@ -36,8 +36,7 @@
                     <a href="{% url 'forum:makingpost'%}" class="blue-button mb-5" style="text-decoration:none; color: white;">Tạo bài đăng</a>
                     {% endif %}
                         <div class="content mb-2">
-                            <div class="list-posts w-100">
-                                <ul class="list-unstyled">
+                            <div class="ul w-100" style="list-style-type: none;">
                                     {% for post in posts %}
                                     <li style="margin-bottom: 20px;">
                                         <a href="{% url 'forum:post' post.id %}" style="text-decoration:none">
@@ -72,48 +71,46 @@
                                                             <input type="hidden" name="post_id" value="{{ post.id }}">
                                                             {% if user not in post.likes.all %}
                                                                 <button type="submit" class="highlight-button">
-                                                                    <i class="fa-solid fa-thumbs-up"></i>
-                                                                    Like
+                                                                    Thích
                                                                 </button>
                                                             {% else %}
                                                                 <button type="submit-" class="highlight-button">
-                                                                    <i class="fa-solid fa-thumbs-up"></i>
-                                                                    Unlike
+                                                                    Đã thích
                                                                 </button>
                                                             {% endif %}
+                                                            <button type="button" class="small-button ms-2" disabled>{{ post.num_likes }}<i class="fa-solid fa-heart ms-1"></i></button>
+                                                            <button type="button" class="small-button ms-2" disabled>{{ post.reply_count }}<i class="fa-solid fa-comment ms-1"></i></button>
                                                     {% endif %}
                                                     </form>
-                                                    <strong class="like__counter">{{ post.num_likes }} likes</strong>
                                                 </p>
                                             </div>
                                         </a>
                                     </li>
                                     {% endfor %}
-                                </ul>
                             </div>
                         </div>
                     <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-center">
+                        <ul class="pagination justify-content-center" style="color: white;">
                             {% if posts.has_previous %}
-                                <li class="page-item"><a class="page-link rounded-3" href="?page=1" style="color: #4f4fff;">First</a></li>
-                                <li class="page-item"><a class="page-link rounded-3" href="?page={{ posts.previous_page_number }}" style="background-color: #4f4fff;">Back</a></li>
+                                <li class="page-item"><a class="page-link me-2 rounded-3" href="?page=1" style="background-color: #ebebeb; border: none;color: black;">First</a></li>
+                                <li class="page-item"><a class="page-link me-2 rounded-3" href="?page={{ posts.previous_page_number }}" style="background-color: #ebebeb; border: none;color: black;">Back</a></li>
                             {% endif %}
                             {% if posts.number > 2 %}
-                                <li class="page-item"><a class="page-link rounded-3" href="?page={{ posts.number|add:"-2" }}" style="background-color: #4f4fff;">{{ posts.number|add:"-2" }}</a></li>
+                                <li class="page-item"><a class="page-link me-2 rounded-3" href="?page={{ posts.number|add:"-2" }}" style="background-color: #ebebeb; border: none;color: black;">{{ posts.number|add:"-2" }}</a></li>
                             {% endif %}
                             {% if posts.number > 1 %}
-                                <li class="page-item"><a class="page-link rounded-3" href="?page={{ posts.number|add:"-1" }}" style="background-color: #4f4fff;">{{ posts.number|add:"-1" }}</a></li>
+                                <li class="page-item"><a class="page-link me-2 rounded-3" href="?page={{ posts.number|add:"-1" }}" style="background-color: #ebebeb; border: none;color: black;">{{ posts.number|add:"-1" }}</a></li>
                             {% endif %}
-                            <li class="page-item active"><a class="page-link rounded-3" href="?page={{ posts.number }}" style="background-color: #4f4fff;">{{ posts.number }}</a></li>
+                            <li class="page-item active"><a class="page-link me-2 rounded-3" href="?page={{ posts.number }}" style="background-color: #ebebeb; border: none;color: black;">{{ posts.number }}</a></li>
                             {% if posts.paginator.num_pages > posts.number %}
-                                <li class="page-item"><a class="page-link rounded-3" href="?page={{ posts.number|add:"1" }}" style="background-color: #4f4fff;">{{ posts.number|add:"1" }}</a></li>
+                                <li class="page-item"><a class="page-link me-2 rounded-3" href="?page={{ posts.number|add:"1" }}" style="background-color: #ebebeb; border: none;color: black;">{{ posts.number|add:"1" }}</a></li>
                             {% endif %}
                             {% if posts.paginator.num_pages > posts.number|add:"1" %}
-                                <li class="page-item"><a class="page-link rounded-3" href="?page={{ posts.number|add:"2" }}" style="background-color: #4f4fff;">{{ posts.number|add:"2" }}</a></li>
+                                <li class="page-item"><a class="page-link me-2 rounded-3" href="?page={{ posts.number|add:"2" }}" style="background-color: #ebebeb; border: none;color: black;">{{ posts.number|add:"2" }}</a></li>
                             {% endif %}
                             {% if posts.has_next %}
-                                <li class="page-item"><a class="page-link rounded-3" href="?page={{ posts.next_page_number }}" style="background-color: #4f4fff;">Next</a></li>
-                                <li class="page-item"><a class="page-link rounded-3" href="?page={{ posts.paginator.num_pages }}" style="background-color: #4f4fff;">Last</a></li>
+                                <li class="page-item"><a class="page-link me-2 rounded-3" href="?page={{ posts.next_page_number }}" style="background-color: #ebebeb; border: none;color: black;">Next</a></li>
+                                <li class="page-item"><a class="page-link me-2 rounded-3" href="?page={{ posts.paginator.num_pages }}" style="background-color: #ebebeb; border: none;color: black;">Last</a></li>
                             {% endif %}
                         </ul>
                     </nav>

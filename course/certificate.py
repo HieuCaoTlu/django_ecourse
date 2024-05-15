@@ -42,7 +42,7 @@ def make_certificates(name_t, course_t, date):
     img_io.seek(0)
 
     storage = settings.firebase.storage()
-    storage_path = f"certificate/" + f"{name}_{course}"
+    storage_path = f"certificate/" + f"{name}_{date}"
     storage.child(storage_path).put(img_io)
     print('Saving Certificate of:', name)
     os.remove(source)

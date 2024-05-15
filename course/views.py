@@ -122,7 +122,7 @@ class DetailCourse(View):
             enrollment.completed = True
             cert_name = f"{enrollment.student.first_name} {enrollment.student.last_name}"
             cert_course = course.title
-            cert_date = ''
+            cert_date = course.id
             enrollment.certificate = make_certificates(cert_name, cert_course, cert_date)
             enrollment.save()
 

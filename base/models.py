@@ -124,7 +124,7 @@ class Enrollment(models.Model):
     enroll_date = models.DateTimeField(auto_now_add=True)
     score = models.IntegerField(default=0, null=False)
     completed = models.BooleanField(default=False, blank=True)
-    review = models.CharField(blank=True, max_length=200)
+    review = models.CharField(blank=True, max_length=500)
     certificate = models.URLField(default='', blank=True)
 
     class Meta:

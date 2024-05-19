@@ -2,10 +2,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout 
 from django.shortcuts import render, redirect
-from base.forms import StudentCreationForm, StudentChangeForm, TeacherCreationForm, TeacherChangeForm
+from base.forms import OTPVerificationForm, StudentCreationForm, StudentChangeForm, TeacherCreationForm, TeacherChangeForm
 from django.views import View
-from base.models import Student, Teacher
-
+from base.models import Student, Teacher, User
+from base.tests import send_email, generate_otp
 # Create your views here.
 class Login(View):
 
@@ -50,9 +50,12 @@ class Register(View):
         else:
             form = TeacherCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            request.session['login_valid'] = 'REGISTER_SUCCESS'
-            return redirect('base:login')
+            user = form.save(commit=False)
+            otp = generate_otp()
+            request.session['otp'] = otp
+            send_email(user.email, otp)
+            request.session['user_id'] = user.id
+            return redirect('base:verify_otp')
         if role_type == 'student':
             form = StudentCreationForm()
         else:
@@ -87,3 +90,38 @@ class Personal(View):
             else:
                 form = TeacherChangeForm(instance=teacher)       
         return render(request, 'base/personal.html', {'form': form, 'message':'FAIL'})
+
+class VerifyOTP(View):
+    def get(self, request):
+        if request.session.get('otp',None):
+            form = OTPVerificationForm()
+            return render(request, 'base/verify_otp.html', {'form': form})
+        else:
+            return redirect('base:login')
+
+    def post(self, request):
+        form = OTPVerificationForm(request.POST)
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return redirect('base:register')
+
+        otp = request.session.get('otp')
+
+        if form.is_valid() and otp:
+            if form.cleaned_data['otp'] == otp:
+                try:
+                    user = User.objects.get(pk=user_id)
+                    user.is_active = True
+                    user.save()
+                    del request.session['user_id']
+                    del request.session['otp']
+                    request.session['login_valid'] = 'REGISTER_SUCCESS'
+                    return redirect('base:login')
+                except User.DoesNotExist:
+                    message = 'User not found'
+            else:
+                message = 'Nhập sai mã OTP hoặc mã đã hết hạn'
+        else:
+            message = 'Trường thông tin không chính xác'
+
+        return render(request, 'base/verify_otp.html', {'form': form, 'message': message})

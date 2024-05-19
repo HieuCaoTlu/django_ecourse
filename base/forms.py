@@ -11,7 +11,6 @@ class UserCreationForm(CreForm):
 
     def save(self, commit=True):
         user = self.instance
-        user.is_staff = True 
         return super().save(commit=True)
 
     class Meta:
@@ -26,7 +25,6 @@ class UserChangeForm(ChangeForm):
 class TeacherCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)  
-        user.is_staff = True  
         teacher_group = Group.objects.get_or_create(name='Teacher')[0]
         teacher_group.user_set.add(user)
         user.save()
@@ -141,3 +139,5 @@ class CourseDescForm(forms.ModelForm):
         model = CourseDescription
         fields = '__all__'    
     
+class OTPVerificationForm(forms.Form):
+    otp = forms.CharField(max_length=6, required=True)

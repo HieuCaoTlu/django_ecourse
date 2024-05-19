@@ -179,3 +179,11 @@ VNPAY_PAYMENT_URL = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
 VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
 VNPAY_TMN_CODE = '3TKIQZQW' 
 VNPAY_HASH_SECRET_KEY = 'CZGBSDAHHBWFPJPYLNLXXOYQIZHBWTFL' 
+
+
+EMAIL_HOST = 'smtp.mailersend.net'
+EMAIL_HOST_USER = 'MS_FfWYEP@trial-jpzkmgqyz1ml059v.mlsender.net'
+EMAIL_HOST_PASSWORD = 'H8AlS4EZHhhtUpKU'
+EMAIL_PORT = '587'
+EMAIL_USE_TLS = True
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'

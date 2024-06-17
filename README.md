@@ -1,4 +1,4 @@
-# Django Online Course
+# Django Online Course (Language: Vietnamese)
 ![image](https://github.com/HieuCaoTlu/django_ecourse/assets/153081121/f5546c06-9876-4729-8a5f-59ee8920d86b)
 
 - 😍 **How to install this project?**:
@@ -16,3 +16,7 @@
   + Pyrebase4: package which have a role to connect our Django to Firebase
   + PIL: a package handles images for our app and generates certificates
   + More..
+
+- Other screenshot:
+![image](https://github.com/HieuCaoTlu/django_ecourse/assets/153081121/1692fe5d-cf74-4ae6-a54d-8b64253b11fd)
+![image](https://github.com/HieuCaoTlu/django_ecourse/assets/153081121/933bd785-0877-4ff8-bf58-aebf72e5a758)

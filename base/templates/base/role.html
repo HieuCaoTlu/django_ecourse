@@ -1,5 +1,6 @@
 {% extends 'base/base.html' %}
 {% block content %}
+{% load static %}
 <style>
     .link-item {
         border: 1px solid #ccc;
@@ -23,7 +24,7 @@
         <div class="col-md-3 link-item justify-content-center rounded-4 d-flex align-items-center" style="border: 1px solid #ccc;">
             <a href="{% url 'base:register' 'student' %}" class="button d-block mt-3 mb-5" style="text-decoration: none;">
                 <div class="text-center">
-                    <img src="https://scontent.fhan5-9.fna.fbcdn.net/v/t1.15752-9/441250150_286365501199532_4658899814401305186_n.png?_nc_cat=110&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeF-fG5Vwi_4uWnby5k48GMRD2OWIIDX2nQPY5YggNfadD-aWB2js5LMLtcrXnmuAKUYRetNMAdsP0SK8PWb2DEh&_nc_ohc=r49RuP5iHm8Q7kNvgFjQTnl&_nc_ht=scontent.fhan5-9.fna&cb_e2o_trans=t&oh=03_Q7cD1QFHQ-N373BoJhwJB0wyA5rPKz-hzzh4L-Ra_AqNfvhPRw&oe=6661D35F"
+                    <img src='{% static 'img/student.png' %}'
                         alt="" class="rounded d-block img-fluid" style="width: 18rem; height: 15rem;">
                     <h3 style="color: #5E5DF0;">Học viên</h3>
                     <p class="text-center" style="max-width: 13rem; margin: 0 auto;color:black;">Tham gia khóa học và nhận chứng chỉ</p>
@@ -34,7 +35,7 @@
         <div class="col-md-3 link-item justify-content-center rounded-4 d-flex align-items-center" style="border: 1px solid #ccc;">
             <a href="{% url 'base:register' 'teacher' %}" class="button d-block mt-3 mb-5" style="text-decoration: none;">
                 <div class="text-center">
-                    <img src="https://scontent.fhan5-6.fna.fbcdn.net/v/t1.15752-9/440724411_746150501027508_1732690996934795568_n.png?_nc_cat=107&ccb=1-7&_nc_sid=5f1848&_nc_eui2=AeH5TioE1fTxXVvicdIiuq37zWhubqaFsqzNaG5upoWyrMMtBkefpjKur6QIEOSNV7f5nc5TqIXDYQ9_OZQ6JUqH&_nc_ohc=6ZozDyhK2sgQ7kNvgGzJxG2&_nc_ht=scontent.fhan5-6.fna&cb_e2o_trans=t&oh=03_Q7cD1QH5lKN6RMIMOiMhH1m2mJyb_n-gsWNKD-XxT-X9QnFjug&oe=6661DE32"
+                    <img src='{% static 'img/teacher.png' %}'
                         alt="" class="rounded d-block img-fluid" style="width: 20rem; height: 15rem;">
                     <h3 style="color: #5E5DF0;">Giảng viên</h3>
                     <p class="text-center" style="max-width: 13rem; margin: 0 auto;color:black;">Xây dựng các khóa học và tiếp cận học viên</p>

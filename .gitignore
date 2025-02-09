@@ -4,3 +4,4 @@ documents/
 courses/
 category/
 __pycache__/
+.env

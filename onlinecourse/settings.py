@@ -163,27 +163,27 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 import pyrebase
 config = {
-    'apiKey': 'AIzaSyCXFO__w0zuzt2_g6t8ZUE6uy1hywEdcg8',
-    'authDomain': 'onlinecourse-d2722.firebaseapp.com',
-    'databaseURL': "https://onlinecourse-d2722-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    'projectId': 'onlinecourse-d2722',
-    'storageBucket': 'onlinecourse-d2722.appspot.com',
-    'messagingSenderId': '187056922415',
-    'appId': '1:187056922415:web:8664c4c38fc34b0a544bda',
+    'apiKey': os.getenv('FIREBASE_API_KEY'),
+    'authDomain': os.getenv('FIREBASE_AUTH_DOMAIN'),
+    'databaseURL': os.getenv('FIREBASE_DATABASE_URL'),
+    'projectId': os.getenv('FIREBASE_PROJECT_ID'),
+    'storageBucket': os.getenv('FIREBASE_STORAGE_BUCKET'),
+    'messagingSenderId': os.getenv('FIREBASE_MESSAGING_SENDER_ID'),
+    'appId': os.getenv('FIREBASE_APP_ID'),
 }
+
 firebase = pyrebase.initialize_app(config)
 
+# VNPAY Config
+VNPAY_RETURN_URL = os.getenv('VNPAY_RETURN_URL')
+VNPAY_PAYMENT_URL = os.getenv('VNPAY_PAYMENT_URL')
+VNPAY_TMN_CODE = os.getenv('VNPAY_TMN_CODE')
+VNPAY_HASH_SECRET_KEY = os.getenv('VNPAY_HASH_SECRET_KEY')
 
-VNPAY_RETURN_URL = 'http://localhost:8000/payment/payment_return'  
-VNPAY_PAYMENT_URL = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'  
-VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
-VNPAY_TMN_CODE = '3TKIQZQW' 
-VNPAY_HASH_SECRET_KEY = 'CZGBSDAHHBWFPJPYLNLXXOYQIZHBWTFL' 
-
-
-EMAIL_HOST = 'smtp.mailersend.net'
-EMAIL_HOST_USER = 'MS_FfWYEP@trial-jpzkmgqyz1ml059v.mlsender.net'
-EMAIL_HOST_PASSWORD = 'H8AlS4EZHhhtUpKU'
-EMAIL_PORT = '587'
-EMAIL_USE_TLS = True
-EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+# Email Config
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

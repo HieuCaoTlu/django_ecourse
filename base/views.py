@@ -51,9 +51,10 @@ class Register(View):
             form = TeacherCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            otp = generate_otp()
+            otp = '1234'
             request.session['otp'] = otp
-            send_email(user.email, otp)
+            print(otp)
+            # send_email(user.email, otp)
             request.session['user_id'] = user.id
             return redirect('base:verify_otp')
         if role_type == 'student':

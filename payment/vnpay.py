@@ -20,8 +20,9 @@ def get_client_ip(request):
 
 def active_payment(request, form, course_id):
     current_host = request.get_host()
-    if 'localhost' in current_host:
-        return_link = settings.VNPAY_RETURN_URL + f'/{course_id}'
+    print(current_host)
+    if '127.0.0.1' or 'localhost' in current_host:
+        return_link = f'http://localhost:8000/payment/payment_return/{course_id}'
     else:
         return_link = f'https://{current_host}/payment/payment_return/{course_id}'
     if form.is_valid():
